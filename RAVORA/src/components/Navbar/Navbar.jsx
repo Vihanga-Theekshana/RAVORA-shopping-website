@@ -3,7 +3,7 @@ import Searchbar from "./Searchbar";
 const Navbar = () => {
   return (
     <>
-      <div className="p-2 pl-4 flex items-center justify-between h-18 border-b-2 border-gray-300">
+      <div className="p-2 pl-5 flex items-center justify-between h-18 border-b-2 border-gray-300">
         <h1 className="font-bold text-3xl">RAVORA</h1>
 
         <ul className="flex gap-15">
@@ -25,7 +25,7 @@ const Navbar = () => {
           <li className="pr-30 pl-30">
             <Searchbar />
           </li>
-          <li className=" flex gap-5 pr-3">
+          <li className=" flex gap-5 pr-5">
             <div>
               <button className="cursor-pointer">
                 <svg
