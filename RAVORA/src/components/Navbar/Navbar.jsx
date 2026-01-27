@@ -6,24 +6,26 @@ const Navbar = () => {
       <div className="p-2 pl-4 flex items-center justify-between h-18 border-b-2 border-gray-300">
         <h1 className="font-bold text-3xl">RAVORA</h1>
 
-        <ul className="flex gap-10">
+        <ul className="flex gap-15">
           <li>
-            <button className="font-semibold cursor-pointer">Home</button>
+            <button className="font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
+              Home
+            </button>
           </li>
           <li>
-            <button className="font-semibold cursor-pointer">
+            <button className="font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
               Men's Clothing
             </button>
           </li>
           <li>
-            <button className="font-semibold cursor-pointer">
+            <button className="font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
               Women's Clothing
             </button>
           </li>
           <li className="pr-30 pl-30">
             <Searchbar />
           </li>
-          <li className=" flex gap-5">
+          <li className=" flex gap-5 pr-3">
             <div>
               <button className="cursor-pointer">
                 <svg

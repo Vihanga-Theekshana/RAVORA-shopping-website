@@ -1,7 +1,7 @@
 const Searchbar = () => {
   return (
     <>
-      <div className="flex pl-1 pr-1 border-2 border-gray-600 rounded-sm items-center">
+      <div className="flex pl-2 pr-2 border-2 border-gray-600 rounded-xl items-center">
         <input
           type="text"
           placeholder="Search products.."
