@@ -1,7 +1,95 @@
+import { useState } from "react";
+import Itemcard from "../components/Items/Itemcard";
 import Navbar from "../components/Navbar/Navbar";
 import Promovideo from "../components/Promovideo";
 
 const Homepage = () => {
+  const showitem = () => {
+    setshowmore((prv) => prv + 5);
+  };
+  const [showmore, setshowmore] = useState(5);
+  const items = [
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 2500,
+      img: "m1.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 3500,
+      img: "m2.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 4500,
+      img: "m3.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 1500,
+      img: "m4.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 2500,
+      img: "m5.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 4500,
+      img: "w1.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 2500,
+      img: "w2.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 3500,
+      img: "w3.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 2500,
+      img: "m1.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 3500,
+      img: "m2.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 4500,
+      img: "m3.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 1500,
+      img: "m4.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 2500,
+      img: "m5.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 4500,
+      img: "w1.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 2500,
+      img: "w2.png",
+    },
+    {
+      title: "Premium breathable linen. Minimal clean style",
+      price: 3500,
+      img: "w3.png",
+    },
+  ];
   return (
     <>
       <Navbar />
@@ -71,6 +159,31 @@ const Homepage = () => {
               </div>
             </button>
           </div>
+        </div>
+      </div>
+      {/* items */}
+
+      <div className="grid grid-cols-5 gap-6 m-10">
+        {items.slice(0, showmore).map((value) => {
+          return (
+            <div>
+              <Itemcard
+                title={value.title}
+                price={value.price}
+                img={value.img}
+              />
+            </div>
+          );
+        })}
+      </div>
+      <div className="p-3 flex justify-center items-center">
+        <div>
+          <button
+            className="bg-black text-white p-2 rounded-xl cursor-pointer"
+            onClick={showitem}
+          >
+            Show more
+          </button>
         </div>
       </div>
     </>
