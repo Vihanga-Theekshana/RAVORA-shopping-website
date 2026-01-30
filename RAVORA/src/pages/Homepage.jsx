@@ -5,7 +5,7 @@ import Promovideo from "../components/Promovideo";
 
 const Homepage = () => {
   const showitem = () => {
-    setshowmore((prv) => prv + 5);
+    setshowmore((showmore) => showmore + 5);
   };
   const [showmore, setshowmore] = useState(5);
   const items = [
@@ -176,14 +176,16 @@ const Homepage = () => {
           );
         })}
       </div>
-      <div className="p-3 flex justify-center items-center">
+      <div className="pb-6 flex justify-center items-center">
         <div>
-          <button
-            className="bg-black text-white p-2 rounded-xl cursor-pointer"
-            onClick={showitem}
-          >
-            Show more
-          </button>
+          {showmore < items.length && (
+            <button
+              className="bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black text-white pl-2 pr-2 pt-1 pb-1 rounded-sm text-sm cursor-pointer"
+              onClick={showitem}
+            >
+              Show more
+            </button>
+          )}
         </div>
       </div>
     </>
