@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Itemcard from "../components/Items/Itemcard";
-import Navbar from "../components/Navbar/Navbar";
+import Navbar from "../components/common/Navbar/Navbar";
 import Promovideo from "../components/Promovideo";
+import Footer from "../components/common/footer/Footer";
 
 const Homepage = () => {
   const showitem = () => {
@@ -188,6 +189,7 @@ const Homepage = () => {
           )}
         </div>
       </div>
+      <Footer />
     </>
   );
 };
