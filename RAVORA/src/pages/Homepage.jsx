@@ -182,7 +182,7 @@ const Homepage = () => {
         <div>
           {showmore < items.length && (
             <button
-              className="bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black text-white pl-2 pr-2 pt-1 pb-1 rounded-sm text-sm cursor-pointer"
+              className="bg-black hover:bg-white hover:text-black  border-2 border-black text-white pl-2 pr-2 pt-1 pb-1  rounded-sm text-sm cursor-pointer"
               onClick={showitem}
             >
               Show more
