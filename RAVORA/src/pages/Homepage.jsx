@@ -3,6 +3,7 @@ import Itemcard from "../components/Items/Itemcard";
 import Navbar from "../components/common/Navbar/Navbar";
 import Promovideo from "../components/Promovideo";
 import Footer from "../components/common/footer/Footer";
+import { Link } from "react-router-dom";
 
 const Homepage = () => {
   const showitem = () => {
@@ -93,7 +94,6 @@ const Homepage = () => {
   ];
   return (
     <>
-      <Navbar />
       <Promovideo />
       <div className=" flex justify-center pt-5">
         <h1 className="text-3xl font-bold">Shop By Catagory</h1>
@@ -101,6 +101,7 @@ const Homepage = () => {
 
       <div className="flex">
         {/* mens card */}
+
         <div className=" flex relative overflow-hidden justify-center items-center w-1/2  h-80 mt-10 ml-10 mb-10 mr-5 rounded-xl ">
           <div
             className="absolute inset-0 bg-[url('/images/men.png')] bg-cover bg-center 
@@ -189,7 +190,6 @@ const Homepage = () => {
           )}
         </div>
       </div>
-      <Footer />
     </>
   );
 };

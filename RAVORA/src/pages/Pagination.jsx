@@ -6,7 +6,7 @@ const Pagination = ({ setpage, total, page }) => {
     <>
       <div className="flex items-center gap-3 justify-center py-8">
         <button
-          className="h-10 w-10 flex items-center justify-center border rounded-md bg-white"
+          className="h-10 w-10 flex items-center justify-center border rounded-md bg-white cursor-pointer"
           onClick={() => page > 1 && setpage(page - 1)}
         >
           &lt;
@@ -15,7 +15,7 @@ const Pagination = ({ setpage, total, page }) => {
           return (
             <button
               onClick={() => setpage(num)}
-              className={`h-10 w-10 flex items-center justify-center border rounded-md ${
+              className={`h-10 w-10 flex items-center justify-center border rounded-md cursor-pointer ${
                 page === num
                   ? "bg-black text-white border-black"
                   : "bg-white text-black border-gray-300"
@@ -28,7 +28,7 @@ const Pagination = ({ setpage, total, page }) => {
         <span className="text-gray-500">...</span>
         <button
           onClick={() => setpage(total)}
-          className={`h-10 w-10 flex items-center justify-center border rounded-md ${
+          className={`h-10 w-10 flex items-center justify-center border rounded-md cursor-pointer ${
             page === total
               ? "bg-black text-white border-black"
               : "bg-white text-black border-gray-300"
@@ -38,7 +38,7 @@ const Pagination = ({ setpage, total, page }) => {
         </button>
         <button
           onClick={() => page < total && setpage(page + 1)}
-          className="h-10 w-10 flex items-center justify-center border rounded-md bg-white"
+          className="h-10 w-10 flex items-center justify-center border rounded-md bg-white cursor-pointer"
         >
           &gt;
         </button>
