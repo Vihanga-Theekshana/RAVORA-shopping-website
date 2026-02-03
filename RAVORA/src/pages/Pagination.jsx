@@ -1,7 +1,8 @@
 const Pagination = ({ setpage, total, page }) => {
-  let arr = [1, 2, 3];
-  if (page >= 4) arr.push(page);
-  if (page + 1 <= total && page >= 3) arr.push(page + 1);
+  let arr = [];
+  for (let i = 1; i <= page + 1 && i <= total; i++) {
+    arr.push(i);
+  }
   return (
     <>
       <div className="flex items-center gap-3 justify-center py-8">
