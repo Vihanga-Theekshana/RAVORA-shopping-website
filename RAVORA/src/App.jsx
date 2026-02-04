@@ -5,18 +5,20 @@ import Navbar from "./components/common/Navbar/Navbar";
 import Homepage from "./pages/Homepage";
 import Menclothing from "./pages/Menclothingpage";
 import Womenclothing from "./pages/Womenclothing";
+import Login from "./pages/Login";
 
 function App() {
   return (
     <>
       <Navbar />
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/Men" element={<Menclothing />} />
         <Route path="/Women" element={<Womenclothing />} />
-      </Routes>
+      </Routes> */}
       {/* <Homepage /> */}
       {/* <Menclothing /> */}
+      <Login />
       <Footer />
     </>
   );

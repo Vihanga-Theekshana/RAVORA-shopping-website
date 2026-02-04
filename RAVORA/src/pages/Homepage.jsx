@@ -111,26 +111,28 @@ const Homepage = () => {
             <h1 className="text-2xl p-2 rounded-xl bg-gray-300 text-black">
               MEN'S CLOTHING
             </h1>
-            <button>
-              <div className="flex group items-center bg-black text-lg text-white p-2 rounded-xl cursor-pointer">
-                <h1>Explore now</h1>
+            <Link to="/Men">
+              <button>
+                <div className="flex group items-center bg-black text-lg text-white p-2 rounded-xl cursor-pointer">
+                  <h1>Explore now</h1>
 
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6 font-bold transition-transform duration-300 group-hover:translate-x-2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
-                  />
-                </svg>
-              </div>
-            </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6 font-bold transition-transform duration-300 group-hover:translate-x-2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+                    />
+                  </svg>
+                </div>
+              </button>
+            </Link>
           </div>
         </div>
         {/* women card */}
@@ -140,26 +142,28 @@ const Homepage = () => {
             <h1 className=" text-2xl p-2 rounded-xl bg-gray-300 text-black">
               WOMEN'S CLOTHING
             </h1>
-            <button>
-              <div className="flex group items-center bg-black text-lg text-white p-2 rounded-xl cursor-pointer">
-                <h1>Explore now</h1>
+            <Link to="/Women">
+              <button>
+                <div className="flex group items-center bg-black text-lg text-white p-2 rounded-xl cursor-pointer">
+                  <h1>Explore now</h1>
 
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6 font-bold transition-transform duration-300 group-hover:translate-x-2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
-                  />
-                </svg>
-              </div>
-            </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6 font-bold transition-transform duration-300 group-hover:translate-x-2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+                    />
+                  </svg>
+                </div>
+              </button>
+            </Link>
           </div>
         </div>
       </div>
