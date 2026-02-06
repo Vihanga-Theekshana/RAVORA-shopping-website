@@ -7,21 +7,23 @@ import Menclothing from "./pages/Menclothingpage";
 import Womenclothing from "./pages/Womenclothing";
 import Login from "./pages/Login&Registration/Login";
 import Signup from "./pages/Login&Registration/Signup";
+import Itemdetail from "./components/Items/Itemdetail";
 function App() {
   return (
     <>
       <Navbar />
 
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/Men" element={<Menclothing />} />
         <Route path="/Women" element={<Womenclothing />} />
-      </Routes>
+      </Routes> */}
       {/* <Homepage /> */}
       {/* <Menclothing /> */}
       {/* <Login /> */}
       {/* <Signup />
        */}
+      <Itemdetail />
       <Footer />
     </>
   );
