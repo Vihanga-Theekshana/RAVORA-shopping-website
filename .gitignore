@@ -1,0 +1,14 @@
+# Node
+node_modules/
+
+# Environment files
+.env
+RAVORA-Backend/.env
+RAVORA/.env
+
+# Build folders
+dist/
+build/
+
+# Logs
+npm-debug.log*
