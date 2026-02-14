@@ -21,9 +21,9 @@ function App() {
       {/* <Homepage /> */}
       {/* <Menclothing /> */}
       {/* <Login /> */}
-      {/* <Signup />
-       */}
-      <Itemdetail />
+      <Signup />
+
+      {/* <Itemdetail /> */}
       <Footer />
     </>
   );

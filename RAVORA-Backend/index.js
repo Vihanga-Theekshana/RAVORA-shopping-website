@@ -1,10 +1,13 @@
 require("dotenv").config();
-const http = require('http');
-const requestListener = function(req, res) {
-  res.writeHead(200);
-  res.end('Hello, World!');
-}
+const authroute = require("./routes/auth.route");
+const express = require("express");
+const cors = require("cors");
 
-const server = http.createServer(requestListener);
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use("/api/auth",authroute);
+
+
 console.log('server listening on port: '+ process.env.PORT);
-server.listen(process.env.PORT);
+app.listen(process.env.PORT);
