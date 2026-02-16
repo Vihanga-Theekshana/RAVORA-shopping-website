@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const pool = require("../db");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 async function register(req,res) {
 
@@ -57,7 +58,7 @@ async function login(req,res) {
             return res.status(400).json({message:"invalid email or password "})
         }
 
-        let accesstoken = jwt.sign({id:user.id,email:user.email},"acess",{expiresIn:60 * 60});
+        let accesstoken = jwt.sign({id:user.id,email:user.email},process.env.JWT_SECRET,{expiresIn:60 * 60});
 
         // store token in the session
         req.session.authorization = {accesstoken}
