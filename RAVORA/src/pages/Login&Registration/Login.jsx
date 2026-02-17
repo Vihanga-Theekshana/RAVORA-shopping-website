@@ -1,22 +1,24 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const background = location.state?.backgroundLocation;
 
   return (
     <div
       className="fixed inset-0 z-50 bg-black/50"
-      onClick={() => navigate(-1)}
+      onClick={() => navigate(background?.pathname || "/")}
     >
       <div className="flex justify-center items-center p-5 relative">
         <form
           onClick={(e) => e.stopPropagation()}
-          className="bg-white text-gray-500 max-w-[350px] mx-4 md:p-6 p-4 text-left text-sm rounded-xl shadow-[0px_0px_10px_0px] shadow-black/10"
+          className="bg-white mt-33 text-gray-500 max-w-[400px] mx-4 md:p-6 p-4 text-left text-sm rounded-xl shadow-[0px_0px_10px_0px] shadow-black/10"
         >
           <button
             type="button"
             className="absolute"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(background?.pathname || "/")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +65,10 @@ const Login = () => {
           </button>
           <p className="text-center mt-4">
             Don’t have an account?{" "}
-            <Link to="/Signup">
+            <Link
+              to="/Signup"
+              state={{ backgroundLocation: background || location }}
+            >
               <button className="text-black font-semibold underline cursor-pointer">
                 Signup Now
               </button>
