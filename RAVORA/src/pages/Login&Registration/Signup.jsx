@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Example() {
   const [username, setusername] = useState("");
@@ -73,9 +74,11 @@ export default function Example() {
 
         <p className="text-center mt-4">
           Already have an account?{" "}
-          <a href="#" className="text-black font-semibold underline">
-            Log In
-          </a>
+          <Link to="/Login">
+            <button className="text-black font-semibold underline">
+              Log In
+            </button>
+          </Link>
         </p>
       </form>
     </div>
