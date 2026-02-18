@@ -1,9 +1,29 @@
+import axios from "axios";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const background = location.state?.backgroundLocation;
+  //create email , password , message usestaes
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const [message, setmessage] = useState("");
+
+  const submithandel = async () => {
+    try {
+      const value = await axios.post("http://localhost:8080/api/auth/login", {
+        email,
+        password,
+      }); //pass value to backend
+      setmessage(value.data.message);
+      setemail(""); //erasedata
+      setpassword("");
+    } catch (err) {
+      setmessage(err.value?.data?.message || "Error login");
+    }
+  };
 
   return (
     <div
@@ -13,6 +33,7 @@ const Login = () => {
       <div className="flex justify-center items-center p-5 relative">
         <form
           onClick={(e) => e.stopPropagation()}
+          onSubmit={submithandel} //call subit handel
           className="bg-white mt-33 text-gray-500 max-w-[400px] mx-4 md:p-6 p-4 text-left text-sm rounded-xl shadow-[0px_0px_10px_0px] shadow-black/10"
         >
           <button
@@ -43,6 +64,8 @@ const Login = () => {
             className="w-full border my-3 border-gray-500/30 outline-none rounded-full py-2.5 px-4"
             type="email"
             placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setemail(e.target.value)}
             required
           />
           <input
@@ -50,6 +73,8 @@ const Login = () => {
             className="w-full border mt-1 border-gray-500/30 outline-none rounded-full py-2.5 px-4"
             type="password"
             placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setpassword(e.target.value)}
             required
           />
           <div className="text-right py-4">
@@ -63,6 +88,7 @@ const Login = () => {
           >
             Log in
           </button>
+          {message}
           <p className="text-center mt-4">
             Don’t have an account?{" "}
             <Link
