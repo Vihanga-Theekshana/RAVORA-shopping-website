@@ -9,6 +9,7 @@ import Login from "./pages/Login&Registration/Login";
 import Signup from "./pages/Login&Registration/Signup";
 import Itemdetail from "./components/Items/Itemdetail";
 import Whitebox from "./pages/Login&Registration/Whitebox";
+import Admin from "./pages/Admindashboard/admin";
 function App() {
   const location = useLocation();
   const state = location.state;
@@ -23,6 +24,7 @@ function App() {
         <Route path="/Men" element={<Menclothing />} />
         <Route path="/Women" element={<Womenclothing />} />
         <Route path="*" element={<Whitebox />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
       {/* <Homepage /> */}
       {/* <Menclothing /> */}

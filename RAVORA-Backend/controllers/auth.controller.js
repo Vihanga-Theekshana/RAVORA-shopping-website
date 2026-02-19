@@ -43,7 +43,7 @@ async function login(req,res) {
             return res.status(400).json({message:"error login"});
         }
 
-        const [users] = await pool.query("SELECT id,username,password_hash,email FROM users WHERE email = ?",[email]);
+        const [users] = await pool.query("SELECT id,username,password_hash,email,role FROM users WHERE email = ?",[email]);
     
         if(users.length === 0){
             return res.status(400).json({message:"invalid email or password "})
@@ -62,6 +62,7 @@ async function login(req,res) {
 
         // store token in the session
         req.session.authorization = {accesstoken}
+        req.session.user = {id:user.id,username:user.username,email:user.email,role:user.role}
         return res.status(200).json({message:"login successful" ,user:{ id:user.id , username : user.username , email : user.email} })
  
     }catch(err){
