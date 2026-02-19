@@ -11,15 +11,21 @@ const Login = () => {
   const [password, setpassword] = useState("");
   const [message, setmessage] = useState("");
 
-  const submithandel = async () => {
+  const submithandel = async (e) => {
+    e.preventDefault();
     try {
-      const value = await axios.post("http://localhost:8080/api/auth/login", {
-        email,
-        password,
-      }); //pass value to backend
+      const value = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        {
+          email,
+          password,
+        },
+        { withCredentials: true },
+      ); //pass value to backend
       setmessage(value.data.message);
       setemail(""); //erasedata
       setpassword("");
+      navigate(background?.pathname || "/admin");
     } catch (err) {
       setmessage(err.value?.data?.message || "Error login");
     }
