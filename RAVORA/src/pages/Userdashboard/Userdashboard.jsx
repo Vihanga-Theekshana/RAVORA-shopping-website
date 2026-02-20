@@ -1,3 +1,6 @@
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 const Userdashboard = () => {
   const boxIcon =
     "https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/e-commerce/boxIcon.svg";
@@ -55,8 +58,27 @@ const Userdashboard = () => {
       isPaid: true,
     },
   ];
+  const navigate = useNavigate();
+  const handellogout = async () => {
+    try {
+      await axios.post("http://localhost:8080/api/auth/logout"); //post logout request
+      alert("You have logged out successfully!");
+      navigate("/");
+    } catch (err) {
+      console.error(err + "Logout failed");
+    }
+  };
   return (
-    <div className="md:p-10 p-4 mb-20 mt-5 space-y-4">
+    <div className="md:p-10 p-1 mb-20 mt-2 space-y-4">
+      <div className="flex justify-end">
+        <button
+          className="border text-black rounded-full text-sm px-4 py-1 hover:bg-black hover:text-white cursor-pointer"
+          onClick={handellogout}
+        >
+          Logout
+        </button>
+      </div>
+
       <h2 className="text-lg font-medium">Orders List</h2>
       {orders.map((order, index) => (
         <div

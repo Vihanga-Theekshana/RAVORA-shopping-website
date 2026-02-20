@@ -1,8 +1,11 @@
 import { useState } from "react";
 import Product from "./Product";
 import Additem from "./Additem";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
+  const navigate = useNavigate();
   const dashboardicon = (
     <svg
       className="w-6 h-6"
@@ -69,13 +72,26 @@ const Admin = () => {
     setvalue(value);
   };
 
+  const handellogout = async () => {
+    try {
+      await axios.post("http://localhost:8080/api/auth/logout");
+      alert("You have logged out successfully!");
+      navigate("/");
+    } catch (err) {
+      console.error(err + "Logout failed");
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white transition-all duration-300">
         <div className="flex items-baseline gap-2"></div>
         <div className="flex text-black items-center gap-5 ">
           <p>Hi! Admin</p>
-          <button className="border text-black rounded-full text-sm px-4 py-1">
+          <button
+            className="border text-black rounded-full text-sm px-4 py-1 hover:bg-black hover:text-white cursor-pointer"
+            onClick={handellogout}
+          >
             Logout
           </button>
         </div>

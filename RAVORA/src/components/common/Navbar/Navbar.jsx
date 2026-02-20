@@ -18,6 +18,7 @@ const Navbar = () => {
       }
     } catch (err) {
       navigate("/Login", { state: { backgroundLocation: location } });
+      console.log(err);
     }
   };
   return (
