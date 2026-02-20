@@ -13,6 +13,8 @@ const Navbar = () => {
       const user = res.data.user;
       if (user.role === "admin") {
         navigate("/admin");
+      } else {
+        navigate("/user");
       }
     } catch (err) {
       navigate("/Login", { state: { backgroundLocation: location } });

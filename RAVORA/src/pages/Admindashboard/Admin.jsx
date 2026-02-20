@@ -71,14 +71,11 @@ const Admin = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-black transition-all duration-300">
-        <div className="flex items-baseline gap-2">
-          <h1 className="text-white font-semibold text-3xl">RAVORA</h1>
-          <p className="text-white">Admin</p>
-        </div>
-        <div className="flex text-white items-center gap-5 ">
+      <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white transition-all duration-300">
+        <div className="flex items-baseline gap-2"></div>
+        <div className="flex text-black items-center gap-5 ">
           <p>Hi! Admin</p>
-          <button className="border text-white rounded-full text-sm px-4 py-1">
+          <button className="border text-black rounded-full text-sm px-4 py-1">
             Logout
           </button>
         </div>
