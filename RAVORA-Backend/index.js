@@ -23,6 +23,7 @@ app.use(session( {secret:process.env.JWT_SECRET,resave:false, saveUninitialized:
 
 app.use("/api/auth",authroute);
 app.use("/api/admin",adminroute);
+app.use("/upload", express.static("uploads"));
 
 
 console.log('server listening on port: '+ process.env.PORT);
