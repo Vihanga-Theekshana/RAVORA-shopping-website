@@ -27,7 +27,7 @@ const Login = () => {
       setpassword("");
       navigate(background?.pathname || "/admin");
     } catch (err) {
-      setmessage(err.value?.data?.message || "Error login");
+      setmessage(err.response?.data?.message || "Error login");
     }
   };
 

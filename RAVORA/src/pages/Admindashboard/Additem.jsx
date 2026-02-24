@@ -1,29 +1,63 @@
+import axios from "axios";
+import { useState } from "react";
 const Additem = () => {
+  const [name, setname] = useState("");
+  const [description, setdescription] = useState("");
+  const [category, setcategory] = useState("");
+  const [price, setprice] = useState("");
+  const [offerprice, setofferprice] = useState("");
+  const [images, setimages] = useState([]);
+
+  const handelimage = (e) => {
+    setimages(Array.from(e.target.files));
+  };
+
+  const handelsubmit = async (e) => {
+    e.preventDefault();
+    const formdata = new FormData();
+    formdata.append("name", name);
+    formdata.append("description", description);
+    formdata.append("catagory", category);
+    formdata.append("price", price);
+    formdata.append("offerprice", offerprice);
+
+    images.forEach((img) => {
+      formdata.append("images", img);
+    });
+
+    try {
+      await axios.post("http://localhost:8080/api/admin/additem", formdata, {
+        withCredentials: true,
+      });
+      alert("Product Added Successfully");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="py-10 flex flex-col justify-between bg-white">
-      <form className="md:p-10 p-4 space-y-5 max-w-lg">
+      <form className="md:p-10 p-4 space-y-5 max-w-lg" onSubmit={handelsubmit}>
         <div>
           <p className="text-base font-medium">Product Image</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
-            {Array(4)
-              .fill("")
-              .map((_, index) => (
-                <label key={index} htmlFor={`image${index}`}>
-                  <input
-                    accept="images/*"
-                    type="file"
-                    id={`image${index}`}
-                    hidden
-                  />
-                  <img
-                    className="max-w-24 cursor-pointer"
-                    src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/e-commerce/uploadArea.png"
-                    alt="uploadArea"
-                    width={100}
-                    height={100}
-                  />
-                </label>
-              ))}
+            <label>
+              <input
+                accept="image/*"
+                type="file"
+                name="images"
+                multiple
+                hidden
+                onChange={handelimage}
+              />
+              <img
+                className="max-w-24 cursor-pointer"
+                src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/e-commerce/uploadArea.png"
+                alt="uploadArea"
+                width={100}
+                height={100}
+              />
+            </label>
           </div>
         </div>
         <div className="flex flex-col gap-1 max-w-md">
@@ -35,6 +69,8 @@ const Additem = () => {
             type="text"
             placeholder="Type here"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            value={name}
+            onChange={(e) => setname(e.target.value)}
             required
           />
         </div>
@@ -49,6 +85,8 @@ const Additem = () => {
             id="product-description"
             rows={4}
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
+            value={description}
+            onChange={(e) => setdescription(e.target.value)}
             placeholder="Type here"
           ></textarea>
         </div>
@@ -59,17 +97,17 @@ const Additem = () => {
           <select
             id="category"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            value={category}
+            onChange={(e) => setcategory(e.target.value)}
           >
             <option value="">Select Category</option>
-            {[
-              { name: "Electronics" },
-              { name: "Clothing" },
-              { name: "Accessories" },
-            ].map((item, index) => (
-              <option key={index} value={item.name}>
-                {item.name}
-              </option>
-            ))}
+            {[{ name: "Mensclothing" }, { name: "Womensclothing" }].map(
+              (item, index) => (
+                <option key={index} value={item.name}>
+                  {item.name}
+                </option>
+              ),
+            )}
           </select>
         </div>
         <div className="flex items-center gap-5 flex-wrap">
@@ -82,6 +120,8 @@ const Additem = () => {
               type="number"
               placeholder="0"
               className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              value={price}
+              onChange={(e) => setprice(e.target.value)}
               required
             />
           </div>
@@ -94,11 +134,16 @@ const Additem = () => {
               type="number"
               placeholder="0"
               className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              value={offerprice}
+              onChange={(e) => setofferprice(e.target.value)}
               required
             />
           </div>
         </div>
-        <button className="px-8 py-2.5 bg-indigo-500 text-white font-medium rounded">
+        <button
+          type="submit"
+          className="px-8 py-2.5 bg-indigo-500 text-white font-medium rounded"
+        >
           ADD
         </button>
       </form>
