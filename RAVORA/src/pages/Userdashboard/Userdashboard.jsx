@@ -62,6 +62,8 @@ const Userdashboard = () => {
   const handellogout = async () => {
     try {
       await axios.post("http://localhost:8080/api/auth/logout"); //post logout request
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
       alert("You have logged out successfully!");
       navigate("/");
     } catch (err) {

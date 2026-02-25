@@ -9,7 +9,12 @@ const Navbar = () => {
 
   const handelusericonclick = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/auth/me");
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token");
+
+      const res = await axios.get("http://localhost:8080/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const user = res.data.user;
       if (user.role === "admin") {
         navigate("/admin");
