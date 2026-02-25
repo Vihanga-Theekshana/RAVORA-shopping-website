@@ -25,9 +25,10 @@ const Additem = () => {
       formdata.append("images", img);
     });
 
+    const token = localStorage.getItem("token");
     try {
       await axios.post("http://localhost:8080/api/admin/additem", formdata, {
-        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
       });
       alert("Product Added Successfully");
     } catch (err) {
