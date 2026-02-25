@@ -1,12 +1,12 @@
 const router = require("express").Router();
-const {isAdmin} = require("../middleware/auth.middleware")
+const {isAdmin,veryfytoken} = require("../middleware/auth.middleware")
 const {admin} = require("../controllers/admin.controller");
 const upload = require("../middleware/upload");
 
-router.get("/dashboard",isAdmin,(req,res)=>{
-    res.json({message:"welcome admin", user:req.session.user});
+router.get("/dashboard",veryfytoken,isAdmin,(req,res)=>{
+    res.json({message:"welcome admin", user:req.user});
  })
-router.post("/additem",isAdmin,upload.array("images",4),admin);
+router.post("/additem",veryfytoken,isAdmin,upload.array("images",4),admin);
 
 
 module.exports = router;

@@ -14,20 +14,24 @@ const Login = () => {
   const submithandel = async (e) => {
     e.preventDefault();
     try {
-      const value = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        {
-          email,
-          password,
-        },
-        { withCredentials: true },
-      ); //pass value to backend
+      const value = await axios.post("http://localhost:8080/api/auth/login", {
+        email,
+        password,
+      });
+
+      localStorage.getItem("token", value.data.token);
+      localStorage.getItem("role", value.data.user.role);
       setmessage(value.data.message);
       setemail(""); //erasedata
       setpassword("");
-      navigate(background?.pathname || "/admin");
+      // redirect based on user
+      if (value.data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/user");
+      }
     } catch (err) {
-      setmessage(err.response?.data?.message || "Error login");
+      setmessage(err.response?.data?.message || "Error logging in");
     }
   };
 

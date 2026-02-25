@@ -2,7 +2,6 @@ require("dotenv").config();
 const authroute = require("./routes/auth.route");
 const adminroute = require("./routes/admin.route");
 const express = require("express");
-const session = require("express-session");
 const cors = require("cors");
 
 const app = express();
@@ -16,11 +15,6 @@ app.use(
 
 
 app.use(express.json());
-app.use(session( {secret:process.env.JWT_SECRET,resave:false, saveUninitialized:false ,cookie: {
-      httpOnly: true,
-     
-    },}));
-
 app.use("/api/auth",authroute);
 app.use("/api/admin",adminroute);
 app.use("/upload", express.static("uploads"));

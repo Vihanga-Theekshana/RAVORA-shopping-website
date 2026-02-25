@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const pool = require("../db");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-
+        // ----------register--------------
 async function register(req,res) {
 
     try{
@@ -32,7 +32,7 @@ async function register(req,res) {
 }
 
 
-
+// ------------login-----------
 async function login(req,res) {
     const email = req.body.email;
     const password = req.body.password;
@@ -58,12 +58,11 @@ async function login(req,res) {
             return res.status(400).json({message:"invalid email or password "})
         }
 
-        let accesstoken = jwt.sign({id:user.id,email:user.email},process.env.JWT_SECRET,{expiresIn:60 * 60});
+        let token = jwt.sign({id:user.id,email:user.email,role:user.role},process.env.JWT_SECRET,{expiresIn:60 * 60});
 
-        // store token in the session
-        req.session.authorization = {accesstoken}
-        req.session.user = {id:user.id,username:user.username,email:user.email,role:user.role}
-        return res.status(200).json({message:"login successful" ,user:{ id:user.id , username : user.username , email : user.email} })
+    
+       
+        return res.status(200).json({message:"login successful",token,user:{id:user.id , username:user.username , email:user.email , role : user.role} });
  
     }catch(err){
         console.log(err);
