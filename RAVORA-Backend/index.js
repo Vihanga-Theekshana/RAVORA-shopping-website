@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/api/auth",authroute);
 app.use("/api/admin",adminroute);
 app.use("/upload", express.static("uploads"));
-app.use("/api/item",itemroute);
+app.use("/api/item",itemroute); //item route
 
 
 console.log('server listening on port: '+ process.env.PORT);
