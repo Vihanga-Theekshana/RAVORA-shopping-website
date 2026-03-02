@@ -1,186 +1,51 @@
 import { useState } from "react";
 import Itemcard from "../components/Items/Itemcard";
 import Pagination from "./Pagination";
+import axios from "axios";
+import { useEffect } from "react";
 
 const Menclothing = () => {
-  const items = [
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "m2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "m3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 1500,
-      img: "m4.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m5.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "w1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "w2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "w3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "m2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "m3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 1500,
-      img: "m4.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m5.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "w1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "w2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "w3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "m2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "m3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 1500,
-      img: "m4.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m5.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "w1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "w2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "w3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "m2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "m3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 1500,
-      img: "m4.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m5.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "w1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "w2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "w3.png",
-    },
-  ];
+  const [item, setitem] = useState([]);
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8080/api/item/mensclothing",
+        );
+        setitem(res.data.item);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchdata();
+  }, []);
   const itemperpage = 4;
   const [page, setpage] = useState(1);
 
   const start = (page - 1) * itemperpage;
-  const filtermen = items.filter((value) => value.img.startsWith("m"));
+  const filtermen = item
+    .filter((value) => value.category == "Mensclothing")
+    .map((value) => ({
+      ...value,
+      images: Array.isArray(value.images)
+        ? value.images
+        : JSON.parse(value.images || "[]"),
+    }));
   const variableitem = filtermen.slice(start, start + itemperpage);
   return (
     <>
       <div className="grid grid-cols-4 gap-18 m-10">
         {variableitem.map((value) => {
           return (
-            <div>
+            <div key={value.id}>
               <Itemcard
-                title={value.title}
+                title={value.name}
                 price={value.price}
-                img={value.img}
+                img={
+                  value.images?.length > 0
+                    ? `http://localhost:8080/upload/${value.images[0]}`
+                    : ""
+                }
               />
             </div>
           );
