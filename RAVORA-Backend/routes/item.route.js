@@ -1,8 +1,8 @@
-const { mensclothing } = require("../controllers/itemcard.controller");
+const { clothing } = require("../controllers/itemcard.controller");
 
 const express = require("express");
 const router = express.Router();
 
-router.get("/mensclothing",mensclothing);
+router.get("/mensclothing",clothing);
 
 module.exports = router;

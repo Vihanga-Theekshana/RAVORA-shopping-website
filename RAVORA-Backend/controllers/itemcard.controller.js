@@ -2,7 +2,7 @@ const pool = require("../db");
 require("dotenv").config();
 
 // create mensclothing function to retreve product table
-async function mensclothing (req,res) {
+async function clothing (req,res) {
     try{
         // get value in product table
         const[item] =await pool.query("SELECT id,name,description,category,price,offerPrice,images FROM products" );
@@ -18,4 +18,4 @@ async function mensclothing (req,res) {
     
 }
 
-module.exports = {mensclothing};
+module.exports = {clothing};
