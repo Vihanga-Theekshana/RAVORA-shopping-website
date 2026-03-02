@@ -4,94 +4,37 @@ import Navbar from "../components/common/Navbar/Navbar";
 import Promovideo from "../components/Promovideo";
 import Footer from "../components/common/footer/Footer";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
 
 const Homepage = () => {
+  //----------------------show more use state implement-----------------------
   const showitem = () => {
     setshowmore((showmore) => showmore + 5);
   };
   const [showmore, setshowmore] = useState(5);
-  const items = [
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "m2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "m3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 1500,
-      img: "m4.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m5.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "w1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "w2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "w3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "m2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "m3.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 1500,
-      img: "m4.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "m5.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 4500,
-      img: "w1.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 2500,
-      img: "w2.png",
-    },
-    {
-      title: "Premium breathable linen. Minimal clean style",
-      price: 3500,
-      img: "w3.png",
-    },
-  ];
+  const [item, setitem] = useState([]);
+
+  //----------------add useeffect for fetchdata -----------------------
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/api/item/home");
+        setitem(res.data.item);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchdata();
+  }, []);
+
+  //---------------------map item mean image url convert to object ---------------------
+  const mapitem = item.map((value) => ({
+    ...value,
+    images: Array.isArray(value.images)
+      ? value.images
+      : JSON.parse(value.images || []),
+  }));
   return (
     <>
       <Promovideo />
@@ -170,13 +113,17 @@ const Homepage = () => {
       {/* items */}
 
       <div className="grid grid-cols-5 gap-6 m-10">
-        {items.slice(0, showmore).map((value) => {
+        {mapitem.slice(0, showmore).map((value) => {
           return (
-            <div>
+            <div key={value.id}>
               <Itemcard
-                title={value.title}
+                title={value.name}
                 price={value.price}
-                img={value.img}
+                img={
+                  value.images?.length > 0
+                    ? `http://localhost:8080/upload/${value.images[0]}` //pass image url
+                    : ""
+                }
               />
             </div>
           );
@@ -184,7 +131,7 @@ const Homepage = () => {
       </div>
       <div className="pb-6 flex justify-center items-center">
         <div>
-          {showmore < items.length && (
+          {showmore < mapitem.length && (
             <button
               className="bg-black hover:bg-white hover:text-black  border-2 border-black text-white pl-2 pr-2 pt-1 pb-1  rounded-sm text-sm cursor-pointer"
               onClick={showitem}

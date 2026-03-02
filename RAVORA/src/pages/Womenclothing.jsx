@@ -7,6 +7,7 @@ import axios from "axios";
 const Womenclothing = () => {
   const [item, setitem] = useState([]);
 
+  //---------------------implement useeffect -------------------------------------
   useEffect(() => {
     const fetchdata = async () => {
       try {
@@ -25,6 +26,7 @@ const Womenclothing = () => {
   const [page, setpage] = useState(1);
 
   const start = (page - 1) * itemperpage;
+  //-------------------filter womens ---------------------------
   const filterwomen = item
     .filter((value) => value.category == "Womensclothing")
     .map((value) => ({
@@ -33,6 +35,8 @@ const Womenclothing = () => {
         ? value.images
         : JSON.parse(value.images || []),
     }));
+
+  //---------------slice for pagination ----------------------
   const variableitem = filterwomen.slice(start, start + itemperpage);
   return (
     <>
@@ -45,7 +49,7 @@ const Womenclothing = () => {
                 price={value.price}
                 img={
                   value.images?.length > 0
-                    ? `http://localhost:8080/upload/${value.images[0]}`
+                    ? `http://localhost:8080/upload/${value.images[0]}` //pass image url
                     : ""
                 }
               />
