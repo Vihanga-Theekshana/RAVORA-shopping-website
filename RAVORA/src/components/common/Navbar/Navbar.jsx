@@ -34,21 +34,21 @@ const Navbar = () => {
         <ul className="flex gap-15">
           <li>
             <Link to="/">
-              <button className="font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
+              <button className="outline-0 font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
                 Home
               </button>
             </Link>
           </li>
           <li>
             <Link to="/Men">
-              <button className="font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
+              <button className="outline-0  font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
                 Men's Clothing
               </button>
             </Link>
           </li>
           <li>
             <Link to="/Women">
-              <button className="font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
+              <button className="outline-0 font-semibold cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
                 Women's Clothing
               </button>
             </Link>
