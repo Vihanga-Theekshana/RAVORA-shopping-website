@@ -4,6 +4,7 @@ const Itemcard = ({ title, price, img }) => {
       <div className="flex flex-col gap-2">
         <div
           className="w-full h-80  bg-cover bg-center rounded-xl"
+          // get background image
           style={{
             backgroundImage: img
               ? `url(${img})`
