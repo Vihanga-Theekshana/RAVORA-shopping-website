@@ -18,8 +18,14 @@ if(! req.files || req.files.length === 0){
     
 }
 
+async function deleteitem(req,res) {
+    const id = req.body.id;
+    await pool.query("DELETE FROM products WHERE id = ?",[id]);
+    return res.status(200).json({message:"delete successfuly"});
+}
 
 
 
 
-module.exports = {admin}
+
+module.exports = {admin,deleteitem}

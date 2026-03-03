@@ -30,8 +30,8 @@ const Additem = () => {
       formdata.append("images", img);
     });
 
-    const token = localStorage.getItem("token");
     try {
+      const token = localStorage.getItem("token");
       await axios.post("http://localhost:8080/api/admin/additem", formdata, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -152,7 +152,7 @@ const Additem = () => {
           </div>
           <button
             type="submit"
-            className="px-8 py-2.5 bg-indigo-500 text-white font-medium rounded"
+            className="px-8 py-2.5 bg-black text-white font-medium rounded cursor-pointer hover:bg-gray-500"
           >
             ADD
           </button>
