@@ -47,6 +47,7 @@ const Womenclothing = () => {
               <Itemcard
                 title={value.name}
                 price={value.price}
+                id={value.id}
                 img={
                   value.images?.length > 0
                     ? `http://localhost:8080/upload/${value.images[0]}` //pass image url

@@ -1,7 +1,13 @@
-const Itemcard = ({ title, price, img }) => {
+import { useNavigate } from "react-router-dom";
+
+const Itemcard = ({ title, price, img, id }) => {
+  const navigate = useNavigate();
   return (
     <>
-      <div className="flex flex-col gap-2">
+      <div
+        className="flex flex-col gap-2"
+        onClick={() => navigate(`/itemdetail/${id}`)}
+      >
         <div
           className="w-full h-80  bg-cover bg-center rounded-xl"
           // get background image

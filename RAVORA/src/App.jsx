@@ -27,6 +27,7 @@ function App() {
         <Route path="*" element={<Whitebox />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/user" element={<Userdashboard />} />
+        <Route path="/itemdetail/:id" element={<Itemdetail />} />
       </Routes>
       {/* <Homepage /> */}
       {/* <Menclothing /> */}
