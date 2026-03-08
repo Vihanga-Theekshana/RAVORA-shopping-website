@@ -12,7 +12,10 @@ export default function Footer() {
       <footer className="flex flex-wrap justify-center lg:justify-between overflow-hidden gap-10 md:gap-20 py-16 px-6 md:px-16 lg:px-24 xl:px-32 text-[13px] text-gray-500 bg-black">
         <div className="flex flex-wrap items-start gap-10 md:gap-[30px] xl:gap-[120px]">
           <a href="https://prebuiltui.com">
-            <img src="/images/ravoralogo.png" className="w-auto h-30"></img>
+            <img
+              src="/src/assets/images/ravoralogo.png"
+              className="w-auto h-30"
+            ></img>
           </a>
           <div>
             <p className="text-slate-100 font-semibold">Product</p>
