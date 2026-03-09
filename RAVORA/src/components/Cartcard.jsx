@@ -1,25 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import img1 from "../assets/images/m1.png";
-const Cartcard = ({ name, price }) => {
+const Cartcard = ({ name, price, setsubtotal }) => {
   const [count, setcount] = useState(1);
   const counthandel = (value) => {
     if (value == "add") {
       setcount((prv) => prv + 1);
-    } else {
+    } else if (value == "minus" && count > 0) {
       setcount((prv) => prv - 1);
     }
   };
   const total = price * count;
+  useEffect(() => {
+    setsubtotal(total);
+  }, [total]);
   return (
     <>
-      <div className="justify-between border-2 w-2/3 h-30 flex rounded-2xl m-8">
+      <div className="justify-between border-2 border-gray-300 w-full h-30 flex rounded-2xl mt-3">
         <div className="flex">
           <img className="w-30 h-30 p-3 rounded-3xl" src={img1}></img>
           <div className="p-3 flex flex-col gap-2">
-            <div>hello world</div>
+            <div>{name}</div>
             <div>Rs.1200.00</div>
             <div className="flex items-center">
-              <button className="cursor-pointer" onClick={counthandel}>
+              <button
+                className="cursor-pointer"
+                onClick={() => counthandel("minus")}
+              >
                 <div className="border-2 p-0.2 ">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
