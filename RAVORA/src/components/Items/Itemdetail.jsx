@@ -41,6 +41,21 @@ const Itemdetail = () => {
     ? `http://localhost:8080/upload/${mainimage}`
     : "";
 
+  const addcarthandel = async () => {
+    try {
+      const user_id = localStorage.getItem("user_id");
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:8080/api/item/additem/addtocart",
+        { product_id: id, user_id: user_id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="flex justify-center items-center p-8 mt-12 mb-12">
       <div className="max-w-6xl w-full px-6">
@@ -81,7 +96,10 @@ const Itemdetail = () => {
             <p>{filteritem?.description}</p>
 
             <div className="flex items-center mt-10 gap-4 text-base">
-              <button className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
+              <button
+                className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
+                onClick={addcarthandel}
+              >
                 Add to Cart
               </button>
               <button className="w-full py-3.5 cursor-pointer font-medium bg-indigo-500 text-white hover:bg-indigo-600 transition">

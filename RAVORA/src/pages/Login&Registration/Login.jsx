@@ -21,6 +21,7 @@ const Login = () => {
 
       localStorage.setItem("token", value.data.token);
       localStorage.setItem("role", value.data.user.role);
+      localStorage.setItem("user_id", value.data.user.id);
       setmessage(value.data.message);
       setemail(""); //erasedata
       setpassword("");

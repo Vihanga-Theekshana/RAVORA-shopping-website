@@ -47,7 +47,7 @@ const Homepage = () => {
 
         <div className=" flex relative overflow-hidden justify-center items-center w-1/2  h-80 mt-10 ml-10 mb-10 mr-5 rounded-xl ">
           <div
-            className="absolute inset-0 bg-[url('/images/men.png')] bg-cover bg-center 
+            className="absolute inset-0 bg-[url('/src/assets/images/men.png')] bg-cover bg-center 
           transition-transform duration-500 ease-in-out hover:scale-110 over"
           ></div>
           <div className="relative z-10 flex flex-col gap-3 justify-center items-center">
@@ -80,7 +80,7 @@ const Homepage = () => {
         </div>
         {/* women card */}
         <div className="flex relative justify-center items-center w-1/2    h-80 mt-10 ml-5 mb-10 mr-10 rounded-xl overflow-hidden ">
-          <div className="absolute inset-0 bg-[url('/images/women.png')] bg-cover bg-center transition  duration-500 ease-in-out hover:-translate-y-1 hover:scale-110"></div>
+          <div className="absolute inset-0 bg-[url('/src/assets/images/women.png')] bg-cover bg-center transition  duration-500 ease-in-out hover:-translate-y-1 hover:scale-110"></div>
           <div className="relative z-10 flex flex-col gap-3 justify-center items-center">
             <h1 className=" text-2xl p-2 rounded-xl bg-gray-300 text-black">
               WOMEN'S CLOTHING

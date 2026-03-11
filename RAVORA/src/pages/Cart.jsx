@@ -1,15 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cartcard from "../components/Cartcard";
+import axios from "axios";
 
 const Cart = () => {
+  const [item, setitem] = useState([]);
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          "http://localhost:8080/api/item/getitem/getcart",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        setitem(res.data.cart);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchdata();
+  }, []);
+  const mapitem = item.map((value) => ({
+    ...value,
+    images: Array.isArray(value.images)
+      ? value.images
+      : JSON.parse(value.images || "[]"),
+  }));
+
   const [subtotal, setsubtotal] = useState(0);
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center ">
       <h1 className="text-2xl font-semibold  pt-10 pb-3">Shopping Cart</h1>
-      <div className="w-2/3 h-150">
-        <div>
-          <Cartcard price={1200} setsubtotal={setsubtotal} name={"shirt"} />
-        </div>
+      <div className="w-2/3 h-auto">
+        {mapitem.map((value) => {
+          return (
+            <div>
+              <Cartcard
+                price={value.price}
+                setsubtotal={setsubtotal}
+                name={value.name}
+              />
+            </div>
+          );
+        })}
+
         <div className="w-full border-2 border-gray-400 rounded-3xl mx-auto h-70 m-8">
           <div className="text-2xl font-bold m-3">Order Summary</div>
           <div>

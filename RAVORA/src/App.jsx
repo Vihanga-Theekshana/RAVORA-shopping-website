@@ -13,15 +13,15 @@ import Admin from "./pages/Admindashboard/admin";
 import Userdashboard from "./pages/Userdashboard/Userdashboard";
 import Cart from "./pages/Cart";
 function App() {
-  // const location = useLocation();
-  // const state = location.state;
-  // const background = state?.backgroundLocation;
+  const location = useLocation();
+  const state = location.state;
+  const background = state?.backgroundLocation;
 
   return (
     <>
       <Navbar />
 
-      {/* <Routes location={background || location}>
+      <Routes location={background || location}>
         <Route path="/" element={<Homepage />} />
         <Route path="/Men" element={<Menclothing />} />
         <Route path="/Women" element={<Womenclothing />} />
@@ -29,16 +29,16 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/user" element={<Userdashboard />} />
         <Route path="/itemdetail/:id" element={<Itemdetail />} />
-      </Routes> */}
+        <Route path="/cart" element={<Cart />} />
+      </Routes>
       {/* <Homepage /> */}
 
-      {/* {state?.backgroundLocation && (
+      {state?.backgroundLocation && (
         <Routes>
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Login" element={<Login />} />
         </Routes>
-      )} */}
-      <Cart />
+      )}
 
       <Footer />
     </>
