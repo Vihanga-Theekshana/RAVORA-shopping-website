@@ -35,11 +35,16 @@ const Cart = () => {
       <div className="w-2/3 h-auto">
         {mapitem.map((value) => {
           return (
-            <div>
+            <div key={value.id}>
               <Cartcard
                 price={value.price}
                 setsubtotal={setsubtotal}
                 name={value.name}
+                image={
+                  value.images?.length > 0
+                    ? `http://localhost:8080/upload/${value.images[0]}` //pass image url
+                    : ""
+                }
               />
             </div>
           );

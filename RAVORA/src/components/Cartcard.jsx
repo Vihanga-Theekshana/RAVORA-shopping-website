@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import img1 from "../assets/images/m1.png";
-const Cartcard = ({ name, price, setsubtotal }) => {
+
+const Cartcard = ({ name, price, setsubtotal, image }) => {
   const [count, setcount] = useState(1);
   const counthandel = (value) => {
     if (value == "add") {
@@ -16,8 +16,15 @@ const Cartcard = ({ name, price, setsubtotal }) => {
   return (
     <>
       <div className="justify-between border-2 border-gray-300 w-full h-30 flex rounded-2xl mt-3">
-        <div className="flex">
-          <img className="w-30 h-30 p-3 rounded-3xl" src={img1}></img>
+        <div className="flex items-center p-2">
+          <div
+            className="w-25 h-25 rounded-xl bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: image
+                ? `url(${image})`
+                : "linear-gradient(#e5e7eb, #d1d5db)",
+            }}
+          ></div>
           <div className="p-3 flex flex-col gap-2">
             <div>{name}</div>
             <div>Rs.1200.00</div>
