@@ -15,6 +15,7 @@ const Pagination = ({ setpage, total, page }) => {
         {arr.map((num) => {
           return (
             <button
+              key={num}
               onClick={() => setpage(num)}
               className={`h-10 w-10 flex items-center justify-center border rounded-md cursor-pointer ${
                 page === num

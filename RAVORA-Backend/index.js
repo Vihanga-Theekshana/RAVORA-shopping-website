@@ -23,6 +23,7 @@ app.use("/upload", express.static("uploads"));
 app.use("/api/item",itemroute); //item route
 app.use("/api/item/additem",cartroute);
 app.use("/api/item/getitem",cartroute);
+app.use("/api/item/removeitem",cartroute);
 
 
 console.log('server listening on port: '+ process.env.PORT);

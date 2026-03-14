@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Cartcard from "../components/Cartcard";
 import axios from "axios";
 
 const Cart = () => {
   const [item, setitem] = useState([]);
+  const [itemTotals, setItemTotals] = useState({});
   useEffect(() => {
     const fetchdata = async () => {
       try {
@@ -21,24 +22,36 @@ const Cart = () => {
     };
     fetchdata();
   }, []);
+
+  const handleItemTotalChange = useCallback((id, total) => {
+    setItemTotals((prev) => {
+      if (prev[id] === total) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [id]: total,
+      };
+    });
+  }, []);
+  const subtotal = Object.values(itemTotals).reduce(
+    (sum, value) => sum + value,
+    0,
+  );
+  const handleRemoveItem = (id) => {
+    setitem((prev) => prev.filter((item) => item.id !== id));
+    setItemTotals((prev) => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
+  };
   const mapitem = item.map((value) => ({
     ...value,
     images: Array.isArray(value.images)
       ? value.images
       : JSON.parse(value.images || "[]"),
   }));
-  const [itemTotals, setItemTotals] = useState({});
-  const handleItemTotalChange = (id, total) => {
-    setItemTotals((prev) => ({
-      ...prev,
-      [id]: total,
-    }));
-  };
-  const subtotal = Object.values(itemTotals).reduce(
-    (sum, value) => sum + value,
-    0,
-  );
-
   return (
     <div className="flex flex-col items-center px-4 sm:px-6">
       <h1 className="pb-3 pt-8 text-center text-2xl font-semibold sm:pt-10">
@@ -53,6 +66,7 @@ const Cart = () => {
                 price={value.price}
                 onTotalChange={handleItemTotalChange}
                 name={value.name}
+                onRemove={handleRemoveItem}
                 image={
                   value.images?.length > 0
                     ? `http://localhost:8080/upload/${value.images[0]}` //pass image url

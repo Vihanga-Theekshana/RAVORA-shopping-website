@@ -1,18 +1,41 @@
-import { useEffect, useState } from "react";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
 
-const Cartcard = ({ name, price, onTotalChange, image, id }) => {
+const Cartcard = ({ name, price, onTotalChange, image, id, onRemove }) => {
   const [count, setcount] = useState(1);
+  const onTotalChangeRef = useRef(onTotalChange);
+
+  useEffect(() => {
+    onTotalChangeRef.current = onTotalChange;
+  }, [onTotalChange]);
+
   const counthandel = (value) => {
     if (value == "add") {
       setcount((prv) => prv + 1);
-    } else if (value == "minus" && count > 0) {
+    } else if (value === "minus" && count > 1) {
       setcount((prv) => prv - 1);
     }
   };
   const total = price * count;
   useEffect(() => {
-    onTotalChange(id, total);
-  }, [id, onTotalChange, total]);
+    onTotalChangeRef.current(id, total);
+  }, [id, total]);
+
+  const removehandel = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `http://localhost:8080/api/item/removeitem/deleteitem/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      onRemove(id);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <>
       <div className="mt-3 flex w-full flex-col gap-4 rounded-2xl border-2 border-gray-300 p-3 sm:flex-row sm:items-center sm:justify-between">
@@ -77,8 +100,11 @@ const Cartcard = ({ name, price, onTotalChange, image, id }) => {
         </div>
         <div className="flex flex-col gap-4 self-end text-right sm:self-auto sm:p-5">
           <div>Rs {total}.00</div>
-          <button className="flex items-center gap-1 text-red-500 cursor-pointer">
-            <div>Remove</div>{" "}
+          <button
+            onClick={removehandel}
+            className="flex items-center gap-1 text-red-500 cursor-pointer"
+          >
+            <div>Remove</div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

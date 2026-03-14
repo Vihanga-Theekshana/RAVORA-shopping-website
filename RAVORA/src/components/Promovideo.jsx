@@ -8,7 +8,7 @@ const Promovideo = () => {
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="none"
       />
     </div>
   );
