@@ -41,15 +41,15 @@ const Login = () => {
       className="fixed inset-0 z-50 bg-black/50"
       onClick={() => navigate(background?.pathname || "/")}
     >
-      <div className="flex justify-center items-center p-5 relative">
+      <div className="relative flex min-h-screen items-center justify-center p-4 sm:p-5">
         <form
           onClick={(e) => e.stopPropagation()}
           onSubmit={submithandel} //call subit handel
-          className="bg-white mt-33 text-gray-500 max-w-[400px] mx-4 md:p-6 p-4 text-left text-sm rounded-xl shadow-[0px_0px_10px_0px] shadow-black/10"
+          className="mx-2 w-full max-w-[400px] rounded-xl bg-white p-4 text-left text-sm text-gray-500 shadow-[0px_0px_10px_0px] shadow-black/10 sm:mx-4 sm:p-6"
         >
           <button
             type="button"
-            className="absolute"
+            className="absolute right-4 top-4 sm:right-6 sm:top-6"
             onClick={() => navigate(background?.pathname || "/")}
           >
             <svg

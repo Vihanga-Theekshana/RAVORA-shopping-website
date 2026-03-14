@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const Cartcard = ({ name, price, setsubtotal, image }) => {
+const Cartcard = ({ name, price, onTotalChange, image, id }) => {
   const [count, setcount] = useState(1);
   const counthandel = (value) => {
     if (value == "add") {
@@ -11,23 +11,23 @@ const Cartcard = ({ name, price, setsubtotal, image }) => {
   };
   const total = price * count;
   useEffect(() => {
-    setsubtotal(total);
-  }, [total]);
+    onTotalChange(id, total);
+  }, [id, onTotalChange, total]);
   return (
     <>
-      <div className="justify-between border-2 border-gray-300 w-full h-30 flex rounded-2xl mt-3">
-        <div className="flex items-center p-2">
+      <div className="mt-3 flex w-full flex-col gap-4 rounded-2xl border-2 border-gray-300 p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3 sm:items-center">
           <div
-            className="w-25 h-25 rounded-xl bg-cover bg-center bg-no-repeat"
+            className="h-24 w-24 shrink-0 rounded-xl bg-cover bg-center bg-no-repeat sm:h-25 sm:w-25"
             style={{
               backgroundImage: image
                 ? `url(${image})`
                 : "linear-gradient(#e5e7eb, #d1d5db)",
             }}
           ></div>
-          <div className="p-3 flex flex-col gap-2">
-            <div>{name}</div>
-            <div>Rs.1200.00</div>
+          <div className="flex flex-col gap-2 py-1 sm:p-3">
+            <div className="text-sm font-medium sm:text-base">{name}</div>
+            <div className="text-sm sm:text-base">Rs.{price}</div>
             <div className="flex items-center">
               <button
                 className="cursor-pointer"
@@ -75,7 +75,7 @@ const Cartcard = ({ name, price, setsubtotal, image }) => {
             </div>
           </div>
         </div>
-        <div className="p-5 flex flex-col gap-5">
+        <div className="flex flex-col gap-4 self-end text-right sm:self-auto sm:p-5">
           <div>Rs {total}.00</div>
           <button className="flex items-center gap-1 text-red-500 cursor-pointer">
             <div>Remove</div>{" "}

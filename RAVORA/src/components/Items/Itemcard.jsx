@@ -5,11 +5,11 @@ const Itemcard = ({ title, price, img, id }) => {
   return (
     <>
       <div
-        className="flex flex-col gap-2"
+        className="flex cursor-pointer flex-col gap-2"
         onClick={() => navigate(`/itemdetail/${id}`)}
       >
         <div
-          className="w-full h-80  bg-cover bg-center rounded-xl"
+          className="aspect-[3/4] w-full rounded-xl bg-cover bg-center sm:h-72 sm:aspect-auto lg:h-80"
           // get background image
           style={{
             backgroundImage: img
@@ -17,9 +17,11 @@ const Itemcard = ({ title, price, img, id }) => {
               : "linear-gradient(#e5e7eb, #d1d5db)",
           }}
         ></div>
-        <div className="w-full h-20 flex flex-col gap-2">
-          <h1 className="font-semibold pl-1 pr-1 leading-tight">{title}</h1>
-          <h3 className="pl-1 pr-1 ">Rs {price}</h3>
+        <div className="flex min-h-20 w-full flex-col gap-1 sm:gap-2">
+          <h1 className="line-clamp-2 px-1 text-sm font-semibold leading-tight sm:text-base">
+            {title}
+          </h1>
+          <h3 className="px-1 text-sm sm:text-base">Rs {price}</h3>
         </div>
       </div>
     </>

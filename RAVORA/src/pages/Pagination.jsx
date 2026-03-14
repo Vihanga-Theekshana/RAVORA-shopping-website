@@ -5,7 +5,7 @@ const Pagination = ({ setpage, total, page }) => {
   }
   return (
     <>
-      <div className="flex items-center gap-3 justify-center py-8">
+      <div className="flex flex-wrap items-center justify-center gap-2 px-4 py-8 sm:gap-3">
         <button
           className="h-10 w-10 flex items-center justify-center border rounded-md bg-white cursor-pointer"
           onClick={() => page > 1 && setpage(page - 1)}

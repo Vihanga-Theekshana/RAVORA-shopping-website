@@ -38,25 +38,28 @@ const Homepage = () => {
   return (
     <>
       <Promovideo />
-      <div className=" flex justify-center pt-5">
-        <h1 className="text-3xl font-bold">Shop By Catagory</h1>
-      </div>
+      <section className="mx-auto w-full max-w-7xl px-4 pt-8 sm:px-6 sm:pt-10 lg:px-10">
+        <div className="flex justify-center text-center">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+            Shop By Catagory
+          </h1>
+        </div>
 
-      <div className="flex">
+        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-8">
         {/* mens card */}
 
-        <div className=" flex relative overflow-hidden justify-center items-center w-1/2  h-80 mt-10 ml-10 mb-10 mr-5 rounded-xl ">
+        <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-2xl sm:min-h-[340px] lg:min-h-[420px]">
           <div
             className="absolute inset-0 bg-[url('/src/assets/images/men.png')] bg-cover bg-center 
           transition-transform duration-500 ease-in-out hover:scale-110 over"
           ></div>
-          <div className="relative z-10 flex flex-col gap-3 justify-center items-center">
-            <h1 className="text-2xl p-2 rounded-xl bg-gray-300 text-black">
+          <div className="relative z-10 flex flex-col items-center justify-center gap-3 px-4 text-center sm:gap-4">
+            <h1 className="rounded-xl bg-gray-300/90 px-4 py-2 text-center text-lg font-semibold text-black sm:text-2xl">
               MEN'S CLOTHING
             </h1>
             <Link to="/Men">
               <button>
-                <div className="flex group items-center bg-black text-lg text-white p-2 rounded-xl cursor-pointer">
+                <div className="group flex cursor-pointer items-center rounded-xl bg-black px-4 py-2 text-sm text-white sm:text-base">
                   <h1>Explore now</h1>
 
                   <svg
@@ -79,15 +82,15 @@ const Homepage = () => {
           </div>
         </div>
         {/* women card */}
-        <div className="flex relative justify-center items-center w-1/2    h-80 mt-10 ml-5 mb-10 mr-10 rounded-xl overflow-hidden ">
+        <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-2xl sm:min-h-[340px] lg:min-h-[420px]">
           <div className="absolute inset-0 bg-[url('/src/assets/images/women.png')] bg-cover bg-center transition  duration-500 ease-in-out hover:-translate-y-1 hover:scale-110"></div>
-          <div className="relative z-10 flex flex-col gap-3 justify-center items-center">
-            <h1 className=" text-2xl p-2 rounded-xl bg-gray-300 text-black">
+          <div className="relative z-10 flex flex-col items-center justify-center gap-3 px-4 text-center sm:gap-4">
+            <h1 className="rounded-xl bg-gray-300/90 px-4 py-2 text-center text-lg font-semibold text-black sm:text-2xl">
               WOMEN'S CLOTHING
             </h1>
             <Link to="/Women">
               <button>
-                <div className="flex group items-center bg-black text-lg text-white p-2 rounded-xl cursor-pointer">
+                <div className="group flex cursor-pointer items-center rounded-xl bg-black px-4 py-2 text-sm text-white sm:text-base">
                   <h1>Explore now</h1>
 
                   <svg
@@ -109,10 +112,12 @@ const Homepage = () => {
             </Link>
           </div>
         </div>
-      </div>
+        </div>
+      </section>
       {/* items */}
 
-      <div className="grid grid-cols-5 gap-6 m-10">
+      <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {mapitem.slice(0, showmore).map((value) => {
           return (
             <div key={value.id}>
@@ -129,12 +134,13 @@ const Homepage = () => {
             </div>
           );
         })}
-      </div>
-      <div className="pb-6 flex justify-center items-center">
+        </div>
+      </section>
+      <div className="flex items-center justify-center px-4 pb-8 sm:pb-10">
         <div>
           {showmore < mapitem.length && (
             <button
-              className="bg-black hover:bg-white hover:text-black  border-2 border-black text-white pl-2 pr-2 pt-1 pb-1  rounded-sm text-sm cursor-pointer"
+              className="cursor-pointer rounded-sm border-2 border-black bg-black px-4 py-2 text-sm text-white transition hover:bg-white hover:text-black"
               onClick={showitem}
             >
               Show more

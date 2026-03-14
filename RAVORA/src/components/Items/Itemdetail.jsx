@@ -57,16 +57,16 @@ const Itemdetail = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center p-8 mt-12 mb-12">
-      <div className="max-w-6xl w-full px-6">
-        <div className="flex flex-col md:flex-row gap-16 mt-4">
-          <div className="flex gap-3">
-            <div className="flex flex-col gap-3">
+    <div className="my-8 flex items-center justify-center px-4 py-4 sm:my-12 sm:px-6">
+      <div className="w-full max-w-6xl">
+        <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:gap-12">
+          <div className="flex flex-col-reverse gap-4 sm:flex-row">
+            <div className="flex flex-row gap-3 overflow-x-auto pb-2 sm:flex-col sm:overflow-visible sm:pb-0">
               {filteritem?.images?.map((image, index) => (
                 <div
                   key={index}
                   onClick={() => setselectedimage(image)}
-                  className="border max-w-24 border-gray-500/30 rounded overflow-hidden cursor-pointer"
+                  className="w-20 shrink-0 cursor-pointer overflow-hidden rounded border border-gray-500/30 sm:max-w-24"
                 >
                   <img
                     src={`http://localhost:8080/upload/${image}`}
@@ -76,7 +76,7 @@ const Itemdetail = () => {
               ))}
             </div>
 
-            <div className="border border-gray-500/30 max-w-100 rounded overflow-hidden">
+            <div className="overflow-hidden rounded border border-gray-500/30 sm:max-w-[420px] lg:max-w-[500px]">
               <img
                 src={thumbnail}
                 alt="Selected product"
@@ -85,8 +85,10 @@ const Itemdetail = () => {
             </div>
           </div>
 
-          <div className="text-sm w-full md:w-1/2">
-            <h1 className="text-3xl font-medium">{filteritem?.name}</h1>
+          <div className="w-full text-sm lg:w-1/2">
+            <h1 className="text-2xl font-medium sm:text-3xl">
+              {filteritem?.name}
+            </h1>
 
             <div className="mt-6">
               <p className="text-black">Rs {filteritem?.price}</p>
@@ -95,7 +97,7 @@ const Itemdetail = () => {
             <p className="text-base font-medium mt-6">About Product</p>
             <p>{filteritem?.description}</p>
 
-            <div className="flex items-center mt-10 gap-4 text-base">
+            <div className="mt-10 flex flex-col gap-4 text-base sm:flex-row sm:items-center">
               <button
                 className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
                 onClick={addcarthandel}

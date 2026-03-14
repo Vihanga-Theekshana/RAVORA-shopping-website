@@ -42,10 +42,10 @@ const Additem = () => {
   };
 
   return (
-    <div className="flex w-full">
-      <div className="py-10 flex flex-col  bg-white w-full">
+    <div className="flex w-full flex-col lg:flex-row">
+      <div className="flex w-full flex-col bg-white py-6 sm:py-10">
         <form
-          className="md:p-10 p-4 space-y-5 max-w-lg"
+          className="max-w-lg space-y-5 p-4 sm:p-6 md:p-10"
           onSubmit={handelsubmit}
         >
           <div>
@@ -158,8 +158,8 @@ const Additem = () => {
           </button>
         </form>
       </div>
-      <div className="pr-40 pt-40 ">
-        <div className="w-60">
+      <div className="px-4 pb-10 sm:px-6 lg:px-10 lg:pb-0 lg:pr-16 lg:pt-24 xl:pr-24 xl:pt-40">
+        <div className="w-full max-w-60">
           <div className="flex flex-col gap-2">
             <div
               className="w-full h-80  bg-cover bg-center rounded-xl bg-gray-400"

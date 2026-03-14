@@ -1,17 +1,18 @@
 const Searchbar = () => {
   return (
-    <>
-      <div className="flex pl-2 pr-2 border-2 border-gray-600 rounded-xl items-center">
-        <input
-          type="text"
-          placeholder="Search products.."
-          className="p-1 text-sm outline-0"
-        ></input>
+    <div className="flex items-center w-full max-w-md border-2 border-gray-400 rounded-xl px-3 py-1 bg-white focus-within:border-black transition">
+      <input
+        type="text"
+        placeholder="Search products..."
+        className="w-full text-sm outline-none bg-transparent"
+      />
+
+      <button className="cursor-pointer">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className="size-5"
+          className="size-5 text-gray-600"
         >
           <path
             fillRule="evenodd"
@@ -19,8 +20,9 @@ const Searchbar = () => {
             clipRule="evenodd"
           />
         </svg>
-      </div>
-    </>
+      </button>
+    </div>
   );
 };
+
 export default Searchbar;

@@ -40,7 +40,7 @@ const Womenclothing = () => {
   const variableitem = filterwomen.slice(start, start + itemperpage);
   return (
     <>
-      <div className="grid grid-cols-4 gap-18 m-10">
+      <div className="grid grid-cols-1 gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:px-10 xl:grid-cols-4">
         {variableitem.map((value) => {
           return (
             <div key={value.id}>

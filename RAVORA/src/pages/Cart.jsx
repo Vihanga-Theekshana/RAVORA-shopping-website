@@ -27,18 +27,31 @@ const Cart = () => {
       ? value.images
       : JSON.parse(value.images || "[]"),
   }));
+  const [itemTotals, setItemTotals] = useState({});
+  const handleItemTotalChange = (id, total) => {
+    setItemTotals((prev) => ({
+      ...prev,
+      [id]: total,
+    }));
+  };
+  const subtotal = Object.values(itemTotals).reduce(
+    (sum, value) => sum + value,
+    0,
+  );
 
-  const [subtotal, setsubtotal] = useState(0);
   return (
-    <div className="flex flex-col items-center ">
-      <h1 className="text-2xl font-semibold  pt-10 pb-3">Shopping Cart</h1>
-      <div className="w-2/3 h-auto">
+    <div className="flex flex-col items-center px-4 sm:px-6">
+      <h1 className="pb-3 pt-8 text-center text-2xl font-semibold sm:pt-10">
+        Shopping Cart
+      </h1>
+      <div className="h-auto w-full max-w-5xl">
         {mapitem.map((value) => {
           return (
             <div key={value.id}>
               <Cartcard
+                id={value.id}
                 price={value.price}
-                setsubtotal={setsubtotal}
+                onTotalChange={handleItemTotalChange}
                 name={value.name}
                 image={
                   value.images?.length > 0
@@ -50,28 +63,30 @@ const Cart = () => {
           );
         })}
 
-        <div className="w-full border-2 border-gray-400 rounded-3xl mx-auto h-70 m-8">
-          <div className="text-2xl font-bold m-3">Order Summary</div>
+        <div className="mx-auto my-6 w-full rounded-3xl border-2 border-gray-400 p-4 sm:my-8 sm:p-6">
+          <div className="mb-4 text-xl font-bold sm:text-2xl">
+            Order Summary
+          </div>
           <div>
-            <div className="flex justify-between ml-8 mr-8 mb-1">
+            <div className="mb-1 flex justify-between gap-4 text-sm sm:text-base">
               <div>Subtotal</div>
               <div>Rs {subtotal}.00</div>
             </div>
-            <div className="flex justify-between ml-8 mr-8">
+            <div className="flex justify-between gap-4 text-sm sm:text-base">
               <div>Shipping</div>
-              <div>Calculated at checkout</div>
+              <div className="text-right">Calculated at checkout</div>
             </div>
             <hr className="w-full h-1 bg-gray-200 border-none mx-auto my-3" />
-            <div className="flex justify-between ml-8 mr-8 mb-1">
+            <div className="mb-1 flex justify-between gap-4 text-sm sm:text-base">
               <div className="font-bold">Total</div>
               <div className="font-bold">Rs {subtotal}.00</div>
             </div>
             <hr className="w-full h-1 bg-gray-200 border-none mx-auto my-3" />
-            <div className="w-full flex  gap-3 justify-center mt-5  items-center">
-              <button className="w-1/3 h-10 bg-black text-white rounded-3xl cursor-pointer">
+            <div className="mt-5 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
+              <button className="h-10 w-full cursor-pointer rounded-3xl bg-black text-white sm:w-1/2 lg:w-1/3">
                 Proceed to Checkout
               </button>
-              <button className="w-1/3 h-10 border-2 rounded-3xl cursor-pointer">
+              <button className="h-10 w-full cursor-pointer rounded-3xl border-2 sm:w-1/2 lg:w-1/3">
                 Continue Shopping
               </button>
             </div>

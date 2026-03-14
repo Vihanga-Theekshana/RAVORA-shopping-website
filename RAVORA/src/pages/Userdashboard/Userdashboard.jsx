@@ -71,7 +71,7 @@ const Userdashboard = () => {
     }
   };
   return (
-    <div className="md:p-10 p-1 mb-20 mt-2 space-y-4">
+    <div className="mb-20 mt-2 space-y-4 p-4 sm:p-6 md:p-10">
       <div className="flex justify-end">
         <button
           className="border text-black rounded-full text-sm px-4 py-1 hover:bg-black hover:text-white cursor-pointer"
@@ -85,9 +85,9 @@ const Userdashboard = () => {
       {orders.map((order, index) => (
         <div
           key={index}
-          className="flex flex-col md:grid md:grid-cols-[2fr_1fr_1fr_1fr] md:items-center gap-5 p-5 max-w-4xl rounded-md border border-gray-300 text-gray-800"
+          className="flex max-w-4xl flex-col gap-5 rounded-md border border-gray-300 p-4 text-gray-800 sm:p-5 md:grid md:grid-cols-[2fr_1fr_1fr_1fr] md:items-center"
         >
-          <div className="flex gap-5">
+          <div className="flex gap-4 sm:gap-5">
             <img
               className="w-12 h-12 object-cover opacity-60"
               src={boxIcon}

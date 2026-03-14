@@ -9,12 +9,12 @@ export default function Footer() {
                 }
             `}</style>
 
-      <footer className="flex flex-wrap justify-center lg:justify-between overflow-hidden gap-10 md:gap-20 py-16 px-6 md:px-16 lg:px-24 xl:px-32 text-[13px] text-gray-500 bg-black">
-        <div className="flex flex-wrap items-start gap-10 md:gap-[30px] xl:gap-[120px]">
+      <footer className="flex flex-col gap-10 overflow-hidden bg-black px-6 py-12 text-[13px] text-gray-500 sm:px-8 md:px-12 lg:flex-row lg:justify-between lg:px-20 xl:px-32">
+        <div className="flex flex-wrap items-start justify-center gap-10 sm:justify-between md:gap-8 xl:gap-20">
           <a href="https://prebuiltui.com">
             <img
               src="/src/assets/images/ravoralogo.png"
-              className="w-auto h-30"
+              className="h-24 w-auto sm:h-28"
             ></img>
           </a>
           <div>
@@ -83,7 +83,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="flex flex-col max-md:items-center max-md:text-center gap-2 items-end">
+        <div className="flex flex-col items-center gap-2 text-center lg:items-end lg:text-right">
           <p className="max-w-60">
             Making every customer feel valued—no matter the size of your
             audience.

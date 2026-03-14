@@ -36,10 +36,10 @@ const Product = () => {
     }
   };
   return (
-    <div className="flex-1 py-1 flex flex-col justify-between">
-      <div className="w-full md:p-10 p-4">
+    <div className="flex flex-1 flex-col justify-between py-1">
+      <div className="w-full p-4 md:p-10">
         <h2 className="pb-4 text-lg font-medium">All Products</h2>
-        <div className="flex flex-col items-center max-w-4xl w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
+        <div className="flex w-full max-w-4xl flex-col items-center overflow-x-auto rounded-md border border-gray-500/20 bg-white">
           <table className="md:table-auto table-fixed w-full overflow-hidden">
             <thead className="text-gray-900 text-sm text-left">
               <tr>

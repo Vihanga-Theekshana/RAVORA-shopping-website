@@ -86,9 +86,9 @@ const Admin = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white transition-all duration-300">
+      <div className="flex flex-col gap-3 border-b border-gray-300 bg-white px-4 py-3 transition-all duration-300 sm:flex-row sm:items-center sm:justify-between md:px-8">
         <div className="flex items-baseline gap-2"></div>
-        <div className="flex text-black items-center gap-5 ">
+        <div className="flex items-center justify-between gap-5 text-black sm:justify-end">
           <p>Hi! Admin</p>
           <button
             className="border text-black rounded-full text-sm px-4 py-1 hover:bg-black hover:text-white cursor-pointer"
@@ -98,14 +98,14 @@ const Admin = () => {
           </button>
         </div>
       </div>
-      <div className="flex">
-        <div className="md:w-64 w-16 border-r h-[550px] text-base border-gray-300 pt-4 flex flex-col transition-all duration-300">
+      <div className="flex flex-col md:flex-row">
+        <div className="flex w-full flex-row overflow-x-auto border-b border-gray-300 pt-2 text-base transition-all duration-300 md:h-[550px] md:w-64 md:flex-col md:border-b-0 md:border-r md:pt-4">
           {sidebarLinks.map((item, index) => (
             <button
               onClick={() => buttonclick(item.name)}
               href={item.path}
               key={index}
-              className={`flex items-center py-3 px-4 gap-3 
+              className={`flex shrink-0 items-center gap-3 px-4 py-3 
                             ${
                               item.name === value
                                 ? "border-r-4 md:border-r-[6px] bg-gray-200  border-black-500 text-black-500"
@@ -113,7 +113,7 @@ const Admin = () => {
                             }`}
             >
               {item.icon}
-              <p className="md:block hidden text-center">{item.name}</p>
+              <p className="hidden text-center md:block">{item.name}</p>
             </button>
           ))}
         </div>
