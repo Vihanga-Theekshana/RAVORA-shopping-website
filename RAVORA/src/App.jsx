@@ -12,6 +12,7 @@ import Whitebox from "./pages/Login&Registration/Whitebox";
 import Admin from "./pages/Admindashboard/admin";
 import Userdashboard from "./pages/Userdashboard/Userdashboard";
 import Cart from "./pages/Cart";
+import Ceckout from "./pages/Ceckout";
 function App() {
   const location = useLocation();
   const state = location.state;
@@ -30,6 +31,7 @@ function App() {
         <Route path="/user" element={<Userdashboard />} />
         <Route path="/itemdetail/:id" element={<Itemdetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Ceckout />} />
       </Routes>
       {/* <Homepage /> */}
 

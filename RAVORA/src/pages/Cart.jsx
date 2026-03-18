@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import Cartcard from "../components/Cartcard";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
+  const navigate = useNavigate();
   const [item, setitem] = useState([]);
   const [itemTotals, setItemTotals] = useState({});
   useEffect(() => {
@@ -97,7 +99,10 @@ const Cart = () => {
             </div>
             <hr className="w-full h-1 bg-gray-200 border-none mx-auto my-3" />
             <div className="mt-5 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
-              <button className="h-10 w-full cursor-pointer rounded-3xl bg-black text-white sm:w-1/2 lg:w-1/3">
+              <button
+                onClick={() => navigate("/checkout")}
+                className="h-10 w-full cursor-pointer rounded-3xl bg-black text-white sm:w-1/2 lg:w-1/3"
+              >
                 Proceed to Checkout
               </button>
               <button className="h-10 w-full cursor-pointer rounded-3xl border-2 sm:w-1/2 lg:w-1/3">
