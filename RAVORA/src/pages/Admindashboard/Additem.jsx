@@ -158,7 +158,7 @@ const Additem = () => {
           </button>
         </form>
       </div>
-      <div className="px-4 pb-10 sm:px-6 lg:px-10 lg:pb-0 lg:pr-16 lg:pt-24 xl:pr-24 xl:pt-40">
+      <div className="w-full px-4 pb-10 sm:px-6 lg:px-10 lg:pb-0 lg:pr-16 lg:pt-24 xl:pr-24 xl:pt-40">
         <div className="w-full max-w-60">
           <div className="flex flex-col gap-2">
             <div
