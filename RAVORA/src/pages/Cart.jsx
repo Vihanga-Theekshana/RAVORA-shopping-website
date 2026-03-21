@@ -100,7 +100,10 @@ const Cart = () => {
             <hr className="w-full h-1 bg-gray-200 border-none mx-auto my-3" />
             <div className="mt-5 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
               <button
-                onClick={() => navigate("/checkout")}
+                onClick={() => {
+                  localStorage.setItem("checkoutSubtotal", String(subtotal));
+                  navigate("/checkout", { state: { subtotal } });
+                }}
                 className="h-10 w-full cursor-pointer rounded-3xl bg-black text-white sm:w-1/2 lg:w-1/3"
               >
                 Proceed to Checkout
