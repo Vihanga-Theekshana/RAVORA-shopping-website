@@ -3,10 +3,23 @@ import Cartcard from "../components/Cartcard";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const normalizeImages = (images) => {
+  if (Array.isArray(images)) {
+    return images;
+  }
+
+  try {
+    return JSON.parse(images || "[]");
+  } catch {
+    return [];
+  }
+};
+
 const Cart = () => {
   const navigate = useNavigate();
   const [item, setitem] = useState([]);
   const [itemTotals, setItemTotals] = useState({});
+  const [itemQuantities, setItemQuantities] = useState({});
   useEffect(() => {
     const fetchdata = async () => {
       try {
@@ -36,6 +49,17 @@ const Cart = () => {
       };
     });
   }, []);
+  const handleItemQuantityChange = useCallback((id, quantity) => {
+    setItemQuantities((prev) => {
+      if (prev[id] === quantity) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [id]: quantity,
+      };
+    });
+  }, []);
   const subtotal = Object.values(itemTotals).reduce(
     (sum, value) => sum + value,
     0,
@@ -47,12 +71,19 @@ const Cart = () => {
       delete updated[id];
       return updated;
     });
+    setItemQuantities((prev) => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
   };
   const mapitem = item.map((value) => ({
     ...value,
-    images: Array.isArray(value.images)
-      ? value.images
-      : JSON.parse(value.images || "[]"),
+    images: normalizeImages(value.images),
+  }));
+  const checkoutItems = mapitem.map((value) => ({
+    ...value,
+    quantity: itemQuantities[value.id] ?? value.quantity ?? value.qty ?? 1,
   }));
   return (
     <div className="flex flex-col items-center px-4 sm:px-6">
@@ -67,8 +98,10 @@ const Cart = () => {
                 id={value.id}
                 price={value.price}
                 onTotalChange={handleItemTotalChange}
+                onQuantityChange={handleItemQuantityChange}
                 name={value.name}
                 onRemove={handleRemoveItem}
+                quantity={itemQuantities[value.id] ?? value.quantity ?? value.qty ?? 1}
                 image={
                   value.images?.length > 0
                     ? `http://localhost:8080/upload/${value.images[0]}` //pass image url
@@ -102,13 +135,22 @@ const Cart = () => {
               <button
                 onClick={() => {
                   localStorage.setItem("checkoutSubtotal", String(subtotal));
-                  navigate("/checkout", { state: { subtotal } });
+                  localStorage.setItem(
+                    "checkoutItems",
+                    JSON.stringify(checkoutItems),
+                  );
+                  navigate("/checkout", {
+                    state: { subtotal, item: checkoutItems },
+                  });
                 }}
                 className="h-10 w-full cursor-pointer rounded-3xl bg-black text-white sm:w-1/2 lg:w-1/3"
               >
                 Proceed to Checkout
               </button>
-              <button className="h-10 w-full cursor-pointer rounded-3xl border-2 sm:w-1/2 lg:w-1/3">
+              <button
+                onClick={() => navigate("/")}
+                className="h-10 w-full cursor-pointer rounded-3xl border-2 sm:w-1/2 lg:w-1/3"
+              >
                 Continue Shopping
               </button>
             </div>

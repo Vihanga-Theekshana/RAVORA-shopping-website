@@ -5,6 +5,26 @@ import axios from "axios";
 const formatCurrency = (value) =>
   `Rs. ${new Intl.NumberFormat("en-LK").format(value)}`;
 
+const normalizeImages = (images) => {
+  if (Array.isArray(images)) {
+    return images;
+  }
+
+  try {
+    return JSON.parse(images || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const getStoredCheckoutItems = () => {
+  try {
+    return JSON.parse(localStorage.getItem("checkoutItems") || "[]");
+  } catch {
+    return [];
+  }
+};
+
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,8 +43,20 @@ const Checkout = () => {
   const subtotal =
     location.state?.subtotal ??
     Number(localStorage.getItem("checkoutSubtotal") || 0);
+  const item = location.state?.item ?? getStoredCheckoutItems();
   const deliveryFee = 300;
   const total = subtotal + deliveryFee;
+  const mapitem = item.map((value) => ({
+    ...value,
+    images: normalizeImages(value.images),
+  }));
+  const orderItems = mapitem.map((item) => ({
+    product_id: item.product_id ?? item.id ?? item._id,
+    product_name: item.product_name ?? item.name,
+    product_price: Number(item.product_price ?? item.price ?? 0),
+    quantity: Number(item.quantity ?? item.qty ?? 1),
+    image: item.images?.[0] ?? item.image ?? null,
+  }));
 
   const submitToPayHere = (paymentUrl, formData) => {
     const form = document.createElement("form");
@@ -47,6 +79,7 @@ const Checkout = () => {
     try {
       setError("");
       setMessage("");
+      const token = localStorage.getItem("token");
 
       if (
         !fullName.trim() ||
@@ -63,15 +96,29 @@ const Checkout = () => {
       setLoading(true);
 
       if (paymentMethod === "cod") {
-        const res = await axios.post("http://localhost:8080/api/orders/cod", {
-          fullName,
-          email,
-          phone: phoneNumber,
-          address,
-          city,
-          postalCode,
-          amount: total,
-        });
+        if (!token) {
+          setError("Please log in to place your order");
+          return;
+        }
+
+        const res = await axios.post(
+          "http://localhost:8080/api/orders/cod",
+          {
+            fullName,
+            email,
+            phone: phoneNumber,
+            address,
+            city,
+            postalCode,
+            subtotal,
+            deliveryFee,
+            amount: total,
+            items: orderItems,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
         setMessage(
           `COD order placed successfully. Order ID: ${res.data.orderId}`,
@@ -86,6 +133,9 @@ const Checkout = () => {
       const response = await axios.post(
         "http://localhost:8080/api/payhere/create-payment",
         {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+        {
           first_name,
           last_name,
           email,
@@ -94,7 +144,16 @@ const Checkout = () => {
           city,
           postal_code: postalCode,
           items: "RAVORA Clothing Order",
+          subtotal,
+          deliveryFee,
           amount: total,
+          orderItems: mapitem.map((item) => ({
+            product_id: item.id,
+            product_name: item.name,
+            product_price: item.price,
+            quantity: item.quantity ?? item.qty ?? 1,
+            image: item.images?.[0] || null,
+          })),
         },
       );
 
@@ -245,6 +304,57 @@ const Checkout = () => {
             </h2>
 
             <div className="border border-black p-4 sm:p-5">
+              <div>
+                {mapitem.length === 0 ? (
+                  <p className="text-sm text-slate-600">
+                    Your cart is empty. Add items before placing an order.
+                  </p>
+                ) : (
+                  mapitem.map((value) => {
+                    const itemId = value.id ?? value._id;
+                    const quantity = value.quantity ?? value.qty ?? 1;
+                    const itemTotal = Number(value.price || 0) * quantity;
+                    const imageUrl =
+                      value.images?.length > 0
+                        ? `http://localhost:8080/upload/${value.images[0]}`
+                        : "";
+
+                    return (
+                      <div
+                        key={itemId}
+                        className="mt-3 rounded-2xl border-2 border-gray-300 p-4"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div
+                            className="h-24 w-24 shrink-0 rounded-xl bg-cover bg-center bg-no-repeat"
+                            style={{
+                              backgroundImage: imageUrl
+                                ? `url(${imageUrl})`
+                                : "linear-gradient(#e5e7eb, #d1d5db)",
+                            }}
+                          ></div>
+
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1 line-clamp-2 text-base font-medium">
+                              {value.name}
+                            </div>
+                            <div className="text-sm text-gray-700">
+                              {formatCurrency(value.price)}
+                            </div>
+                            <div className="mt-2 text-sm text-gray-500">
+                              Qty: {quantity}
+                            </div>
+                          </div>
+
+                          <div className="shrink-0 pl-2 text-right text-base font-medium">
+                            {formatCurrency(itemTotal)}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
               <div className="my-5 h-px bg-black" />
 
               <div className="space-y-3 text-sm sm:text-base">
@@ -273,7 +383,7 @@ const Checkout = () => {
 
               <button
                 onClick={handlePlaceOrder}
-                disabled={loading}
+                disabled={loading || mapitem.length === 0}
                 className="mt-5 flex h-11 w-full cursor-pointer items-center justify-center bg-black px-5 text-sm font-semibold text-white transition hover:bg-neutral-800 sm:text-base disabled:opacity-50"
               >
                 {loading

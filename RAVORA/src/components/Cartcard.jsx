@@ -1,13 +1,27 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 
-const Cartcard = ({ name, price, onTotalChange, image, id, onRemove }) => {
-  const [count, setcount] = useState(1);
+const Cartcard = ({
+  name,
+  price,
+  onTotalChange,
+  onQuantityChange,
+  image,
+  id,
+  onRemove,
+  quantity = 1,
+  readOnly = false,
+}) => {
+  const [count, setcount] = useState(quantity);
   const onTotalChangeRef = useRef(onTotalChange);
 
   useEffect(() => {
     onTotalChangeRef.current = onTotalChange;
   }, [onTotalChange]);
+
+  useEffect(() => {
+    setcount(quantity);
+  }, [quantity]);
 
   const counthandel = (value) => {
     if (value == "add") {
@@ -16,12 +30,22 @@ const Cartcard = ({ name, price, onTotalChange, image, id, onRemove }) => {
       setcount((prv) => prv - 1);
     }
   };
+
   const total = price * count;
+
   useEffect(() => {
-    onTotalChangeRef.current(id, total);
+    onTotalChangeRef.current?.(id, total);
   }, [id, total]);
 
+  useEffect(() => {
+    onQuantityChange?.(id, count);
+  }, [count, id, onQuantityChange]);
+
   const removehandel = async () => {
+    if (readOnly) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       await axios.post(
@@ -36,21 +60,28 @@ const Cartcard = ({ name, price, onTotalChange, image, id, onRemove }) => {
       console.log(err);
     }
   };
+
   return (
-    <>
-      <div className="mt-3 flex w-full flex-col gap-4 rounded-2xl border-2 border-gray-300 p-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3 sm:items-center">
-          <div
-            className="h-24 w-24 shrink-0 rounded-xl bg-cover bg-center bg-no-repeat sm:h-25 sm:w-25"
-            style={{
-              backgroundImage: image
-                ? `url(${image})`
-                : "linear-gradient(#e5e7eb, #d1d5db)",
-            }}
-          ></div>
-          <div className="flex flex-col gap-2 py-1 sm:p-3">
-            <div className="text-sm font-medium sm:text-base">{name}</div>
-            <div className="text-sm sm:text-base">Rs.{price}</div>
+    <div className="mt-3 flex w-full flex-col gap-4 rounded-2xl border-2 border-gray-300 p-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
+        <div
+          className="h-24 w-24 shrink-0 rounded-xl bg-cover bg-center bg-no-repeat sm:h-25 sm:w-25"
+          style={{
+            backgroundImage: image
+              ? `url(${image})`
+              : "linear-gradient(#e5e7eb, #d1d5db)",
+          }}
+        ></div>
+
+        <div className="flex min-w-0 flex-col gap-2 py-1 sm:p-3">
+          <div className="break-words text-sm font-medium sm:text-base">
+            {name}
+          </div>
+          <div className="text-sm sm:text-base">Rs.{price}</div>
+
+          {readOnly ? (
+            <div className="text-sm text-gray-600">Qty: {count}</div>
+          ) : (
             <div className="flex items-center">
               <button
                 className="cursor-pointer"
@@ -73,7 +104,9 @@ const Cartcard = ({ name, price, onTotalChange, image, id, onRemove }) => {
                   </svg>
                 </div>
               </button>
-              <div className="w-10 flex justify-center">{count}</div>
+
+              <div className="flex w-10 justify-center">{count}</div>
+
               <button
                 className="cursor-pointer"
                 onClick={() => counthandel("add")}
@@ -96,10 +129,14 @@ const Cartcard = ({ name, price, onTotalChange, image, id, onRemove }) => {
                 </div>
               </button>
             </div>
-          </div>
+          )}
         </div>
-        <div className="flex flex-col gap-4 self-end text-right sm:self-auto sm:p-5">
-          <div>Rs {total}.00</div>
+      </div>
+
+      <div className="flex shrink-0 flex-col gap-4 self-end text-right sm:self-auto sm:p-5">
+        <div>Rs {total}.00</div>
+
+        {!readOnly && (
           <button
             onClick={removehandel}
             className="flex items-center gap-1 text-red-500 cursor-pointer"
@@ -120,9 +157,10 @@ const Cartcard = ({ name, price, onTotalChange, image, id, onRemove }) => {
               />
             </svg>
           </button>
-        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
+
 export default Cartcard;
