@@ -265,39 +265,29 @@ const connection = await pool.getConnection();
 async function notify(req,res) {
    
   try {
-    const {
-      merchant_id,
-      order_id,
-      payhere_amount,
-      payhere_currency,
-      status_code,
-      md5sig,
-    } = req.body;
-
     const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET;
     if (!merchantSecret) {
       return res.status(500).send("Merchant secret not configured");
     }
-
     const localSig = md5(
-      merchant_id +
-        order_id +
-        payhere_amount +
-        payhere_currency +
-        status_code +
+      req.body.merchant_id +
+        req.body.order_id +
+        req.body.payhere_amount +
+        req.body.payhere_currency +
+        req.body.status_code +
         md5(merchantSecret)
     );
 
 
-    if (localSig === md5sig && status_code == "2") {
+    if (localSig === req.body.md5sig && req.body.status_code == "2") {
      await pool.query(
-      `UPDATE orders SET payment_status = "PAID" WHERE order_id = ? `,[order_id]
+      `UPDATE orders SET payment_status = "PAID" WHERE order_id = ? `,[req.body.order_id]
      );
-      console.log("PAID:", order_id);
+      console.log("PAID:", req.body.order_id);
       
     } else {
        await pool.query(
-      `UPDATE orders SET payment_status = "FAILED" WHERE order_id = ? `,[order_id]
+      `UPDATE orders SET payment_status = "FAILED" WHERE order_id = ? `,[req.body.order_id]
      );
     }
 
