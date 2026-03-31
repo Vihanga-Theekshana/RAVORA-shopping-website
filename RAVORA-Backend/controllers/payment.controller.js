@@ -1,9 +1,6 @@
 const pool = require("../db");
-require("dotenv").config;
+require("dotenv").config();
 const crypto = require("crypto");
-
-// temp storage (later use DB)
-const orders = new Map();
 
 const md5 = (text) =>
   crypto.createHash("md5").update(text).digest("hex").toUpperCase();
@@ -41,9 +38,9 @@ async function cod(req, res) {
       !address ||
       !city ||
       !postalCode ||
-      !subtotal ||
-      !deliveryFee ||
-      !amount ||
+      subtotal == null ||
+      deliveryFee == null ||
+      amount == null ||
       !items ||
       !items.length
     ) {
@@ -108,9 +105,10 @@ async function cod(req, res) {
 
 // ----------------create payment ------------------------
 async function createpayment(req,res) {
-
+const connection = await pool.getConnection();
   try {
     const {
+      fullName,
       first_name,
       last_name,
       email,
@@ -118,6 +116,8 @@ async function createpayment(req,res) {
       address,
       city,
       postal_code,
+      deliveryFee,
+      subtotal,
       items,
       amount,
     } = req.body;
@@ -132,16 +132,21 @@ async function createpayment(req,res) {
       : "https://www.payhere.lk/pay/checkout";
 
     if (
+      !fullName ||
       !first_name ||
       !last_name ||
       !email ||
       !phone ||
       !address ||
       !city ||
+      subtotal == null||
+      deliveryFee == null ||
+      amount == null||
       !postal_code ||
       !items ||
-      !amount
-    ) {
+      !items.length
+    ) 
+    {
       return res.status(400).json({ message: "Missing payment fields" });
     }
 
@@ -175,25 +180,61 @@ async function createpayment(req,res) {
         currency +
         hashedSecret
     );
+    
+    await connection.beginTransaction();
+    const user_id = req.user.id;
+    const [orderResult] = await connection.query(
+      `INSERT INTO orders
+      (order_id,user_id,full_name, email, phone, address, city, postal_code, subtotal, delivery_fee, total_amount, payment_method, payment_status, order_status)
+      VALUES (?, ? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        orderId,
+        user_id,
+        fullName,
+        email,
+        phone,
+        address,
+        city,
+        postal_code,
+        subtotal,
+        deliveryFee,
+        amount,
+        "CARD",
+        "PENDING",
+        "PLACED",
+      ]
+    );
 
-    orders.set(orderId, {
-      orderId,
-      email,
-      amount: formattedAmount,
-      paymentMethod: "CARD",
-      status: "PENDING",
-    });
+    const dbOrderId = orderResult.insertId;
+
+    for (const item of items) {
+      await connection.query(
+        `INSERT INTO order_items
+        (order_id, product_id, product_name, product_price, quantity, image)
+        VALUES (?, ?, ?, ?, ?, ?)`,
+        [
+          dbOrderId,
+          item.product_id,
+          item.product_name,
+          item.product_price,
+          item.quantity,
+          item.image,
+        ]
+      );
+    }
+
+    await connection.commit();
 
     res.json({
       paymentUrl,
       formData: {
         merchant_id: merchantId,
         return_url: `${frontendUrl}/success?order_id=${orderId}`,
-        cancel_url: `${frontendUrl}/cancel`,
+        cancel_url: `${frontendUrl}/checkout`,
         notify_url: `${backendUrl}/api/payhere/notify`,
 
         order_id: orderId,
-        items,
+        items :"RAVORA Clothing Order",
         currency,
         amount: formattedAmount,
 
@@ -211,8 +252,12 @@ async function createpayment(req,res) {
 
   } catch (err) {
     console.error(err);
+    await connection.rollback();
     res.status(500).json({ message: "Payment error" });
   }
+  finally {
+  connection.release();
+}
 }
 
 
@@ -243,15 +288,17 @@ async function notify(req,res) {
         md5(merchantSecret)
     );
 
-    const order = orders.get(order_id);
-
-    if (!order) return res.send("Order not found");
 
     if (localSig === md5sig && status_code == "2") {
-      order.status = "PAID";
+     await pool.query(
+      `UPDATE orders SET payment_status = "PAID" WHERE order_id = ? `,[order_id]
+     );
       console.log("PAID:", order_id);
+      
     } else {
-      order.status = "FAILED";
+       await pool.query(
+      `UPDATE orders SET payment_status = "FAILED" WHERE order_id = ? `,[order_id]
+     );
     }
 
     res.send("OK");

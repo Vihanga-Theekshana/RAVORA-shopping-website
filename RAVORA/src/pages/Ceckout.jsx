@@ -40,6 +40,7 @@ const Checkout = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  // Load checkout totals and items from navigation state, with localStorage as a fallback.
   const subtotal =
     location.state?.subtotal ??
     Number(localStorage.getItem("checkoutSubtotal") || 0);
@@ -50,6 +51,7 @@ const Checkout = () => {
     ...value,
     images: normalizeImages(value.images),
   }));
+  // Normalize cart items into the payload shape expected by the backend order APIs.
   const orderItems = mapitem.map((item) => ({
     product_id: item.product_id ?? item.id ?? item._id,
     product_name: item.product_name ?? item.name,
@@ -58,6 +60,7 @@ const Checkout = () => {
     image: item.images?.[0] ?? item.image ?? null,
   }));
 
+  // Redirect to PayHere by posting the payment fields through a temporary form.
   const submitToPayHere = (paymentUrl, formData) => {
     const form = document.createElement("form");
     form.method = "POST";
@@ -95,6 +98,7 @@ const Checkout = () => {
 
       setLoading(true);
 
+      // COD creates the order directly in our backend without leaving the site.
       if (paymentMethod === "cod") {
         if (!token) {
           setError("Please log in to place your order");
@@ -129,13 +133,16 @@ const Checkout = () => {
       const nameParts = fullName.trim().split(" ");
       const first_name = nameParts[0];
       const last_name = nameParts.slice(1).join(" ") || "Customer";
-
+      if (!token) {
+        setError("Please log in to place your order");
+        return;
+      }
+      // Card payments create a pending order first, then redirect the user to PayHere.
       const response = await axios.post(
         "http://localhost:8080/api/payhere/create-payment",
+
         {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-        {
+          fullName,
           first_name,
           last_name,
           email,
@@ -143,17 +150,13 @@ const Checkout = () => {
           address,
           city,
           postal_code: postalCode,
-          items: "RAVORA Clothing Order",
+          items: orderItems,
           subtotal,
           deliveryFee,
           amount: total,
-          orderItems: mapitem.map((item) => ({
-            product_id: item.id,
-            product_name: item.name,
-            product_price: item.price,
-            quantity: item.quantity ?? item.qty ?? 1,
-            image: item.images?.[0] || null,
-          })),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
 
