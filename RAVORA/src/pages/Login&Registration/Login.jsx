@@ -6,6 +6,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const background = location.state?.backgroundLocation;
+  const isModal = Boolean(background);
   //create email , password , message usestaes
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
@@ -22,6 +23,8 @@ const Login = () => {
       localStorage.setItem("token", value.data.token);
       localStorage.setItem("role", value.data.user.role);
       localStorage.setItem("user_id", value.data.user.id);
+      localStorage.setItem("username", value.data.user.username);
+      localStorage.setItem("user_email", value.data.user.email);
       setmessage(value.data.message);
       setemail(""); //erasedata
       setpassword("");
@@ -38,35 +41,45 @@ const Login = () => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50"
-      onClick={() => navigate(background?.pathname || "/")}
+      className={
+        isModal
+          ? "fixed inset-0 z-50 bg-black/50"
+          : "min-h-screen bg-white px-4 py-12"
+      }
+      onClick={
+        isModal ? () => navigate(background?.pathname || "/") : undefined
+      }
     >
-      <div className="relative flex min-h-screen items-center justify-center p-4 sm:p-5">
+      <div
+        className={`relative flex items-center justify-center ${isModal ? "min-h-screen p-4 sm:p-5" : "min-h-[70vh]"}`}
+      >
         <form
           onClick={(e) => e.stopPropagation()}
           onSubmit={submithandel} //call subit handel
           className="mx-2 w-full max-w-[400px] rounded-xl bg-white p-4 text-left text-sm text-gray-500 shadow-[0px_0px_10px_0px] shadow-black/10 sm:mx-4 sm:p-6"
         >
-          <button
-            type="button"
-            className="absolute right-4 top-4 sm:right-6 sm:top-6"
-            onClick={() => navigate(background?.pathname || "/")}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
+          {isModal && (
+            <button
+              type="button"
+              className="absolute right-4 top-4 sm:right-6 sm:top-6"
+              onClick={() => navigate(background?.pathname || "/")}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18 18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
           <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">
             Login Now
           </h2>
@@ -89,9 +102,9 @@ const Login = () => {
             required
           />
           <div className="text-right py-4">
-            <a className="text-black underline" href="#">
+            <Link className="text-black underline" to="/forgot-password">
               Forgot Password
-            </a>
+            </Link>
           </div>
           <button
             type="submit"

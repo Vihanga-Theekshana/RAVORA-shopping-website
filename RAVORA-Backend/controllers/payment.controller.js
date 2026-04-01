@@ -10,6 +10,67 @@ const isPublicUrl = (url) => {
   if (!url) return false;
   return !/localhost|127\.0\.0\.1/i.test(url);
 };
+const isUnknownColumnError = (error) =>
+  error?.code === "ER_BAD_FIELD_ERROR" ||
+  /unknown column/i.test(error?.message || "");
+
+const insertOrderItem = async (connection, dbOrderId, item) => {
+  try {
+    await connection.query(
+      `INSERT INTO order_items
+      (order_id, product_id, product_name, product_price, quantity, image, size, color)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        dbOrderId,
+        item.product_id,
+        item.product_name,
+        item.product_price,
+        item.quantity,
+        item.image,
+        item.size || null,
+        item.color || null,
+      ]
+    );
+  } catch (err) {
+    if (!isUnknownColumnError(err)) {
+      try {
+        await connection.query(
+          `INSERT INTO order_items
+          (order_id, product_id, product_name, product_price, quantity, image, size)
+          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            dbOrderId,
+            item.product_id,
+            item.product_name,
+            item.product_price,
+            item.quantity,
+            item.image,
+            item.size || null,
+          ]
+        );
+        return;
+      } catch (nestedErr) {
+        if (!isUnknownColumnError(nestedErr)) {
+          throw nestedErr;
+        }
+      }
+    }
+
+    await connection.query(
+      `INSERT INTO order_items
+      (order_id, product_id, product_name, product_price, quantity, image)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        dbOrderId,
+        item.product_id,
+        item.product_name,
+        item.product_price,
+        item.quantity,
+        item.image,
+      ]
+    );
+  }
+};
 
 // ----------- cashon delevery --------------
 
@@ -76,19 +137,7 @@ async function cod(req, res) {
     const dbOrderId = orderResult.insertId;
 
     for (const item of items) {
-      await connection.query(
-        `INSERT INTO order_items
-        (order_id, product_id, product_name, product_price, quantity, image)
-        VALUES (?, ?, ?, ?, ?, ?)`,
-        [
-          dbOrderId,
-          item.product_id,
-          item.product_name,
-          item.product_price,
-          item.quantity,
-          item.image,
-        ]
-      );
+      await insertOrderItem(connection, dbOrderId, item);
     }
 
     await connection.commit();
@@ -208,19 +257,7 @@ const connection = await pool.getConnection();
     const dbOrderId = orderResult.insertId;
 
     for (const item of items) {
-      await connection.query(
-        `INSERT INTO order_items
-        (order_id, product_id, product_name, product_price, quantity, image)
-        VALUES (?, ?, ?, ?, ?, ?)`,
-        [
-          dbOrderId,
-          item.product_id,
-          item.product_name,
-          item.product_price,
-          item.quantity,
-          item.image,
-        ]
-      );
+      await insertOrderItem(connection, dbOrderId, item);
     }
 
     await connection.commit();
@@ -298,9 +335,94 @@ async function notify(req,res) {
     res.status(500).send("ERROR");
   }
 }
-    
 
+async function getUserOrders(req, res) {
+  try {
+    const userId = req.user.id;
+    let orders;
 
+    try {
+      [orders] = await pool.query(
+        `SELECT id, order_id, full_name, email, phone, address, city, postal_code,
+                total_amount, payment_method, payment_status, order_status, created_at
+         FROM orders
+         WHERE user_id = ?
+         ORDER BY created_at DESC, id DESC`,
+        [userId],
+      );
+    } catch (error) {
+      if (!isUnknownColumnError(error)) {
+        throw error;
+      }
 
+      [orders] = await pool.query(
+        `SELECT id, order_id, full_name, email, phone, address, city, postal_code,
+                total_amount, payment_method, payment_status, order_status
+         FROM orders
+         WHERE user_id = ?
+         ORDER BY id DESC`,
+        [userId],
+      );
+    }
 
-module.exports = {cod,createpayment,notify};
+    const orderIds = orders.map((order) => order.id);
+    let orderItems = [];
+
+    if (orderIds.length > 0) {
+      const placeholders = orderIds.map(() => "?").join(", ");
+
+      try {
+        [orderItems] = await pool.query(
+          `SELECT order_id, product_name, product_price, quantity, image, size, color
+           FROM order_items
+           WHERE order_id IN (${placeholders})`,
+          orderIds,
+        );
+      } catch (error) {
+        if (!isUnknownColumnError(error)) {
+          throw error;
+        }
+
+        try {
+          [orderItems] = await pool.query(
+            `SELECT order_id, product_name, product_price, quantity, image, size
+             FROM order_items
+             WHERE order_id IN (${placeholders})`,
+            orderIds,
+          );
+        } catch (nestedError) {
+          if (!isUnknownColumnError(nestedError)) {
+            throw nestedError;
+          }
+
+          [orderItems] = await pool.query(
+            `SELECT order_id, product_name, product_price, quantity, image
+             FROM order_items
+             WHERE order_id IN (${placeholders})`,
+            orderIds,
+          );
+        }
+      }
+    }
+
+    const itemsByOrderId = orderItems.reduce((acc, item) => {
+      if (!acc[item.order_id]) {
+        acc[item.order_id] = [];
+      }
+      acc[item.order_id].push(item);
+      return acc;
+    }, {});
+
+    const result = orders.map((order) => ({
+      ...order,
+      items: itemsByOrderId[order.id] || [],
+    }));
+
+    res.json({ orders: result });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch orders" });
+  }
+}
+
+module.exports = {cod,createpayment,notify,getUserOrders};

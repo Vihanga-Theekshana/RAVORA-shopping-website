@@ -19,6 +19,19 @@ const Navbar = () => {
   }, [location.pathname]);
 
   const handelusericonclick = async () => {
+    if (
+      !localStorage.getItem("token") &&
+      (
+        location.pathname === "/Login" ||
+        location.pathname === "/Signup" ||
+        location.pathname === "/forgot-password" ||
+        location.pathname === "/verify-otp" ||
+        location.pathname === "/reset-password"
+      )
+    ) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token");

@@ -1,8 +1,12 @@
-import db from "../db.js";
+const db = require("../db");
+
+const isUnknownColumnError = (error) =>
+  error?.code === "ER_BAD_FIELD_ERROR" ||
+  /unknown column/i.test(error?.message || "");
 
 // add item to cart
-export const addToCart = async (req, res) => {
-  const { user_id, product_id, quantity } = req.body;
+const addToCart = async (req, res) => {
+  const { user_id, product_id, quantity, size, color } = req.body;
 
   try {
     if (!user_id || !product_id) {
@@ -12,45 +16,61 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    const qty = quantity || 1;
+    const qty = Number(quantity) || 1;
 
-    // check user cart
-    const [cartRows] = await db.query(
-      "SELECT id FROM carts WHERE user_id = ?",
-      [user_id]
-    );
+    const [cartRows] = await db.query("SELECT id FROM carts WHERE user_id = ?", [
+      user_id,
+    ]);
 
     let cart_id;
 
     if (cartRows.length === 0) {
-      // create cart
-      const [newCart] = await db.query(
-        "INSERT INTO carts (user_id) VALUES (?)",
-        [user_id]
-      );
+      const [newCart] = await db.query("INSERT INTO carts (user_id) VALUES (?)", [
+        user_id,
+      ]);
       cart_id = newCart.insertId;
     } else {
       cart_id = cartRows[0].id;
     }
 
-    // check if product already exists in cart
-    const [itemRows] = await db.query(
-      "SELECT id, quantity FROM cart_items WHERE cart_id = ? AND product_id = ?",
-      [cart_id, product_id]
-    );
+    try {
+      const [itemRows] = await db.query(
+        "SELECT id, quantity FROM cart_items WHERE cart_id = ? AND product_id = ? AND ((size IS NULL AND ? IS NULL) OR size = ?) AND ((color IS NULL AND ? IS NULL) OR color = ?)",
+        [cart_id, product_id, size || null, size || null, color || null, color || null],
+      );
 
-    if (itemRows.length > 0) {
-      // update quantity
-      await db.query(
-        "UPDATE cart_items SET quantity = quantity + ? WHERE cart_id = ? AND product_id = ?",
-        [qty, cart_id, product_id]
+      if (itemRows.length > 0) {
+        await db.query(
+          "UPDATE cart_items SET quantity = quantity + ? WHERE cart_id = ? AND product_id = ? AND ((size IS NULL AND ? IS NULL) OR size = ?) AND ((color IS NULL AND ? IS NULL) OR color = ?)",
+          [qty, cart_id, product_id, size || null, size || null, color || null, color || null],
+        );
+      } else {
+        await db.query(
+          "INSERT INTO cart_items (cart_id, product_id, quantity, size, color) VALUES (?, ?, ?, ?, ?)",
+          [cart_id, product_id, qty, size || null, color || null],
+        );
+      }
+    } catch (error) {
+      if (!isUnknownColumnError(error)) {
+        throw error;
+      }
+
+      const [itemRows] = await db.query(
+        "SELECT id, quantity FROM cart_items WHERE cart_id = ? AND product_id = ?",
+        [cart_id, product_id],
       );
-    } else {
-      // insert new item
-      await db.query(
-        "INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (?, ?, ?)",
-        [cart_id, product_id, qty]
-      );
+
+      if (itemRows.length > 0) {
+        await db.query(
+          "UPDATE cart_items SET quantity = quantity + ? WHERE cart_id = ? AND product_id = ?",
+          [qty, cart_id, product_id],
+        );
+      } else {
+        await db.query(
+          "INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (?, ?, ?)",
+          [cart_id, product_id, qty],
+        );
+      }
     }
 
     res.json({
@@ -67,24 +87,52 @@ export const addToCart = async (req, res) => {
 };
 
 // get cart items
-export const getCart = async (req, res) => {
+const getCart = async (req, res) => {
   const user_id = req.user.id;
 
   try {
-    const [items] = await db.query(
-      `SELECT 
-        cart_items.id,
-        cart_items.product_id,
-        cart_items.quantity,
-        products.name,
-        products.price,
-        products.images
-       FROM cart_items
-       JOIN carts ON cart_items.cart_id = carts.id
-       JOIN products ON cart_items.product_id = products.id
-       WHERE carts.user_id = ?`,
-      [user_id]
-    );
+    let items;
+
+    try {
+      [items] = await db.query(
+        `SELECT 
+          cart_items.id,
+          cart_items.product_id,
+          cart_items.quantity,
+          cart_items.size,
+          cart_items.color,
+          products.name,
+          products.price,
+          products.images,
+          products.sizes
+         FROM cart_items
+         JOIN carts ON cart_items.cart_id = carts.id
+         JOIN products ON cart_items.product_id = products.id
+         WHERE carts.user_id = ?`,
+        [user_id],
+      );
+    } catch (error) {
+      if (!isUnknownColumnError(error)) {
+        throw error;
+      }
+
+      [items] = await db.query(
+        `SELECT 
+          cart_items.id,
+          cart_items.product_id,
+          cart_items.quantity,
+          cart_items.size,
+          NULL AS color,
+          products.name,
+          products.price,
+          products.images
+         FROM cart_items
+         JOIN carts ON cart_items.cart_id = carts.id
+         JOIN products ON cart_items.product_id = products.id
+         WHERE carts.user_id = ?`,
+        [user_id],
+      );
+    }
 
     res.json({
       success: true,
@@ -100,7 +148,7 @@ export const getCart = async (req, res) => {
 };
 
 // update cart item quantity
-export const updateCartItem = async (req, res) => {
+const updateCartItem = async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
 
@@ -124,7 +172,7 @@ export const updateCartItem = async (req, res) => {
 };
 
 // remove item from cart
-export const removeCartItem = async (req, res) => {
+const removeCartItem = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -144,14 +192,13 @@ export const removeCartItem = async (req, res) => {
 };
 
 // clear user cart
-export const clearCart = async (req, res) => {
+const clearCart = async (req, res) => {
   const { user_id } = req.params;
 
   try {
-    const [cartRows] = await db.query(
-      "SELECT id FROM carts WHERE user_id = ?",
-      [user_id]
-    );
+    const [cartRows] = await db.query("SELECT id FROM carts WHERE user_id = ?", [
+      user_id,
+    ]);
 
     if (cartRows.length === 0) {
       return res.json({
@@ -175,4 +222,12 @@ export const clearCart = async (req, res) => {
       message: "Server error",
     });
   }
+};
+
+module.exports = {
+  addToCart,
+  getCart,
+  updateCartItem,
+  removeCartItem,
+  clearCart,
 };

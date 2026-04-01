@@ -48,6 +48,7 @@ const Womenclothing = () => {
                 title={value.name}
                 price={value.price}
                 id={value.id}
+                inStock={value.in_stock !== 0}
                 img={
                   value.images?.length > 0
                     ? `http://localhost:8080/upload/${value.images[0]}` //pass image url

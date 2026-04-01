@@ -100,6 +100,8 @@ const Cart = () => {
                 onTotalChange={handleItemTotalChange}
                 onQuantityChange={handleItemQuantityChange}
                 name={value.name}
+                size={value.size}
+                color={value.color}
                 onRemove={handleRemoveItem}
                 quantity={itemQuantities[value.id] ?? value.quantity ?? value.qty ?? 1}
                 image={

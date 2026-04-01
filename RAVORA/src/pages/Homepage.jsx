@@ -117,7 +117,7 @@ const Homepage = () => {
       {/* items */}
 
       <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
-        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-5">
         {mapitem.slice(0, showmore).map((value) => {
           return (
             <div key={value.id}>
@@ -125,6 +125,7 @@ const Homepage = () => {
                 title={value.name}
                 price={value.price}
                 id={value.id}
+                inStock={value.in_stock !== 0}
                 img={
                   value.images?.length > 0
                     ? `http://localhost:8080/upload/${value.images[0]}` //pass image url

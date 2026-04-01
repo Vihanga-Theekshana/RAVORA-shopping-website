@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -25,9 +25,19 @@ const getStoredCheckoutItems = () => {
   }
 };
 
+const normalizeCheckoutItem = (value) => ({
+  ...value,
+  images: normalizeImages(value.images),
+  quantity: Number(value.quantity ?? value.qty ?? 1),
+});
+
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const storedSubtotal = Number(localStorage.getItem("checkoutSubtotal") || 0);
+  const initialItems = (location.state?.item ?? getStoredCheckoutItems()).map(
+    normalizeCheckoutItem,
+  );
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -39,26 +49,55 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [checkoutItems, setCheckoutItems] = useState(initialItems);
 
-  // Load checkout totals and items from navigation state, with localStorage as a fallback.
+  // Keep checkout items in local state so quantity changes immediately update totals and order payloads.
   const subtotal =
-    location.state?.subtotal ??
-    Number(localStorage.getItem("checkoutSubtotal") || 0);
-  const item = location.state?.item ?? getStoredCheckoutItems();
+    checkoutItems.length > 0
+      ? checkoutItems.reduce((sum, value) => {
+          const itemPrice = Number(value.price ?? value.product_price ?? 0);
+          const itemQuantity = Number(value.quantity ?? value.qty ?? 1);
+          return sum + itemPrice * itemQuantity;
+        }, 0)
+      : location.state?.subtotal ?? storedSubtotal;
   const deliveryFee = 300;
   const total = subtotal + deliveryFee;
-  const mapitem = item.map((value) => ({
-    ...value,
-    images: normalizeImages(value.images),
-  }));
   // Normalize cart items into the payload shape expected by the backend order APIs.
-  const orderItems = mapitem.map((item) => ({
+  const orderItems = checkoutItems.map((item) => ({
     product_id: item.product_id ?? item.id ?? item._id,
     product_name: item.product_name ?? item.name,
     product_price: Number(item.product_price ?? item.price ?? 0),
     quantity: Number(item.quantity ?? item.qty ?? 1),
     image: item.images?.[0] ?? item.image ?? null,
+    size: item.size ?? null,
+    color: item.color ?? null,
   }));
+
+  useEffect(() => {
+    localStorage.setItem("checkoutItems", JSON.stringify(checkoutItems));
+    localStorage.setItem("checkoutSubtotal", String(subtotal));
+  }, [checkoutItems, subtotal]);
+
+  const handleQuantityChange = (itemId, type) => {
+    setCheckoutItems((prev) =>
+      prev.map((value) => {
+        const currentId = value.id ?? value._id ?? value.product_id;
+        if (currentId !== itemId) {
+          return value;
+        }
+
+        const nextQuantity =
+          type === "add"
+            ? Number(value.quantity ?? value.qty ?? 1) + 1
+            : Math.max(1, Number(value.quantity ?? value.qty ?? 1) - 1);
+
+        return {
+          ...value,
+          quantity: nextQuantity,
+        };
+      }),
+    );
+  };
 
   // Redirect to PayHere by posting the payment fields through a temporary form.
   const submitToPayHere = (paymentUrl, formData) => {
@@ -308,15 +347,18 @@ const Checkout = () => {
 
             <div className="border border-black p-4 sm:p-5">
               <div>
-                {mapitem.length === 0 ? (
+                {checkoutItems.length === 0 ? (
                   <p className="text-sm text-slate-600">
                     Your cart is empty. Add items before placing an order.
                   </p>
                 ) : (
-                  mapitem.map((value) => {
-                    const itemId = value.id ?? value._id;
+                  checkoutItems.map((value) => {
+                    const itemId = value.id ?? value._id ?? value.product_id;
                     const quantity = value.quantity ?? value.qty ?? 1;
-                    const itemTotal = Number(value.price || 0) * quantity;
+                    const itemPrice = Number(
+                      value.price ?? value.product_price ?? 0,
+                    );
+                    const itemTotal = itemPrice * quantity;
                     const imageUrl =
                       value.images?.length > 0
                         ? `http://localhost:8080/upload/${value.images[0]}`
@@ -339,13 +381,75 @@ const Checkout = () => {
 
                           <div className="min-w-0 flex-1">
                             <div className="mb-1 line-clamp-2 text-base font-medium">
-                              {value.name}
+                              {value.name ?? value.product_name}
                             </div>
                             <div className="text-sm text-gray-700">
-                              {formatCurrency(value.price)}
+                              {formatCurrency(itemPrice)}
                             </div>
-                            <div className="mt-2 text-sm text-gray-500">
-                              Qty: {quantity}
+                            {value.size && (
+                              <div className="mt-1 text-xs text-gray-500">
+                                Size: {value.size}
+                              </div>
+                            )}
+                            {value.color && (
+                              <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                                <span>Color:</span>
+                                <span
+                                  className="h-3.5 w-3.5 rounded-full border border-black/20"
+                                  style={{ backgroundColor: value.color }}
+                                ></span>
+                              </div>
+                            )}
+                            <div className="mt-3 flex items-center gap-3">
+                              <button
+                                type="button"
+                                className="flex h-9 w-9 cursor-pointer items-center justify-center border border-black text-black transition hover:bg-gray-100"
+                                onClick={() =>
+                                  handleQuantityChange(itemId, "minus")
+                                }
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="size-5"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M5 12h14"
+                                  />
+                                </svg>
+                              </button>
+
+                              <div className="flex min-w-6 justify-center text-xl font-normal text-black">
+                                {quantity}
+                              </div>
+
+                              <button
+                                type="button"
+                                className="flex h-9 w-9 cursor-pointer items-center justify-center border border-black text-black transition hover:bg-gray-100"
+                                onClick={() =>
+                                  handleQuantityChange(itemId, "add")
+                                }
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="size-5"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 4.5v15m7.5-7.5h-15"
+                                  />
+                                </svg>
+                              </button>
                             </div>
                           </div>
 
@@ -386,7 +490,7 @@ const Checkout = () => {
 
               <button
                 onClick={handlePlaceOrder}
-                disabled={loading || mapitem.length === 0}
+                disabled={loading || checkoutItems.length === 0}
                 className="mt-5 flex h-11 w-full cursor-pointer items-center justify-center bg-black px-5 text-sm font-semibold text-white transition hover:bg-neutral-800 sm:text-base disabled:opacity-50"
               >
                 {loading

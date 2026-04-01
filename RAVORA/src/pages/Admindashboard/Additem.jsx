@@ -1,20 +1,71 @@
 import axios from "axios";
 import { useState } from "react";
 import Itemcard from "../../components/Items/Itemcard";
+
+const SIZE_OPTIONS = ["XS", "S", "M", "L", "XL", "XXL"];
+const IMAGE_SLOTS = 4;
+
 const Additem = () => {
   const [name, setname] = useState("");
   const [description, setdescription] = useState("");
   const [category, setcategory] = useState("");
   const [price, setprice] = useState("");
   const [offerprice, setofferprice] = useState("");
-  const [images, setimages] = useState([]);
-  const [preview, setpreview] = useState(null);
+  const [images, setimages] = useState(Array(IMAGE_SLOTS).fill(null));
+  const [preview, setpreview] = useState(Array(IMAGE_SLOTS).fill(null));
+  const [sizes, setSizes] = useState([]);
+  const [colorInput, setColorInput] = useState("#000000");
+  const [colors, setColors] = useState([]);
 
-  const handelimage = (e) => {
-    const files = Array.from(e.target.files);
-    setimages(files);
-    const file = files[0];
-    setpreview(URL.createObjectURL(file));
+  const handelimage = (index, file) => {
+    if (!file) {
+      return;
+    }
+
+    setimages((prev) => {
+      const updated = [...prev];
+      updated[index] = file;
+      return updated;
+    });
+
+    setpreview((prev) => {
+      const updated = [...prev];
+      updated[index] = URL.createObjectURL(file);
+      return updated;
+    });
+  };
+
+  const handleRemoveImage = (index) => {
+    setimages((prev) => {
+      const updated = [...prev];
+      updated[index] = null;
+      return updated;
+    });
+
+    setpreview((prev) => {
+      const updated = [...prev];
+      updated[index] = null;
+      return updated;
+    });
+  };
+
+  const handleSizeToggle = (selectedSize) => {
+    setSizes((prev) =>
+      prev.includes(selectedSize)
+        ? prev.filter((size) => size !== selectedSize)
+        : [...prev, selectedSize],
+    );
+  };
+
+  const handleAddColor = () => {
+    const normalizedColor = colorInput.toLowerCase();
+    setColors((prev) =>
+      prev.includes(normalizedColor) ? prev : [...prev, normalizedColor],
+    );
+  };
+
+  const handleRemoveColor = (colorToRemove) => {
+    setColors((prev) => prev.filter((color) => color !== colorToRemove));
   };
 
   const handelsubmit = async (e) => {
@@ -25,8 +76,10 @@ const Additem = () => {
     formdata.append("catagory", category);
     formdata.append("price", price);
     formdata.append("offerprice", offerprice);
+    sizes.forEach((size) => formdata.append("sizes", size));
+    colors.forEach((color) => formdata.append("colors", color));
 
-    images.forEach((img) => {
+    images.filter(Boolean).forEach((img) => {
       formdata.append("images", img);
     });
 
@@ -50,24 +103,51 @@ const Additem = () => {
         >
           <div>
             <p className="text-base font-medium">Product Image</p>
-            <div className="flex flex-wrap items-center gap-3 mt-2">
-              <label>
-                <input
-                  accept="image/*"
-                  type="file"
-                  name="images"
-                  multiple
-                  hidden
-                  onChange={handelimage}
-                />
-                <img
-                  className="max-w-24 cursor-pointer"
-                  src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/e-commerce/uploadArea.png"
-                  alt="uploadArea"
-                  width={100}
-                  height={100}
-                />
-              </label>
+            <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {Array.from({ length: IMAGE_SLOTS }).map((_, index) => (
+                <label
+                  key={index}
+                  className="relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-gray-400/70 bg-gray-50"
+                >
+                  <input
+                    accept="image/*"
+                    type="file"
+                    name={`image-${index + 1}`}
+                    hidden
+                    onChange={(e) => handelimage(index, e.target.files?.[0])}
+                  />
+                  {preview[index] ? (
+                    <>
+                      <img
+                        src={preview[index]}
+                        alt={`Preview ${index + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/75 text-sm text-white cursor-pointer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleRemoveImage(index);
+                        }}
+                      >
+                        x
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <img
+                        className="max-w-10"
+                        src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/e-commerce/uploadArea.png"
+                        alt="uploadArea"
+                        width={40}
+                        height={40}
+                      />
+                      <span className="mt-1 text-xs">Upload</span>
+                    </div>
+                  )}
+                </label>
+              ))}
             </div>
           </div>
           <div className="flex flex-col gap-1 max-w-md">
@@ -120,6 +200,70 @@ const Additem = () => {
               )}
             </select>
           </div>
+          <div className="flex flex-col gap-2 max-w-md">
+            <label className="text-base font-medium">Available Sizes</label>
+            <div className="flex flex-wrap gap-2">
+              {SIZE_OPTIONS.map((size) => (
+                <label
+                  key={size}
+                  className={`flex cursor-pointer items-center gap-2 rounded border px-3 py-2 text-sm transition ${
+                    sizes.includes(size)
+                      ? "border-black bg-black text-white"
+                      : "border-gray-400/40 bg-white text-black"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    checked={sizes.includes(size)}
+                    onChange={() => handleSizeToggle(size)}
+                  />
+                  <span>{size}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 max-w-md">
+            <label className="text-base font-medium">Available Colors</label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={colorInput}
+                onChange={(e) => setColorInput(e.target.value)}
+                className="h-10 w-14 cursor-pointer rounded border border-gray-400/40 bg-white p-1"
+              />
+              <button
+                type="button"
+                onClick={handleAddColor}
+                className="rounded bg-black px-4 py-2 text-sm font-medium text-white"
+              >
+                Add Color
+              </button>
+            </div>
+            {colors.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {colors.map((color) => (
+                  <div
+                    key={color}
+                    className="flex items-center gap-2 rounded border border-gray-300 px-2 py-1"
+                  >
+                    <span
+                      className="h-5 w-5 rounded-full border border-black/20"
+                      style={{ backgroundColor: color }}
+                    ></span>
+                    <span className="text-xs uppercase">{color}</span>
+                    <button
+                      type="button"
+                      className="cursor-pointer text-xs text-red-500"
+                      onClick={() => handleRemoveColor(color)}
+                    >
+                      x
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-5 flex-wrap">
             <div className="flex-1 flex flex-col gap-1 w-32">
               <label className="text-base font-medium" htmlFor="product-price">
@@ -165,12 +309,35 @@ const Additem = () => {
               className="w-full h-80  bg-cover bg-center rounded-xl bg-gray-400"
               // get background image
               style={{
-                backgroundImage: preview ? `url(${preview})` : "",
+                backgroundImage: preview[0] ? `url(${preview[0]})` : "",
               }}
             ></div>
             <div className="w-full h-20 flex flex-col gap-2">
               <h1 className="font-semibold pl-1 pr-1 leading-tight">{name}</h1>
               <h3 className="pl-1 pr-1 ">Rs {price}</h3>
+              {sizes.length > 0 && (
+                <div className="flex flex-wrap gap-1 px-1">
+                  {sizes.map((size) => (
+                    <span
+                      key={size}
+                      className="rounded border border-black px-2 py-0.5 text-xs"
+                    >
+                      {size}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {colors.length > 0 && (
+                <div className="flex flex-wrap gap-1 px-1">
+                  {colors.map((color) => (
+                    <span
+                      key={color}
+                      className="h-4 w-4 rounded-full border border-black/20"
+                      style={{ backgroundColor: color }}
+                    ></span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

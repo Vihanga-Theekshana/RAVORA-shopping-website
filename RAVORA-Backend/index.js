@@ -30,5 +30,16 @@ app.use("/api/orders",paymentroute);
 app.use("/api/payhere",paymentroute);
 
 
-console.log('server listening on port: '+ process.env.PORT);
-app.listen(process.env.PORT);
+const port = process.env.PORT || 8080;
+const server = app.listen(port, () => {
+  console.log("server listening on port: " + port);
+});
+
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`Port ${port} is already in use. Stop the other server and restart nodemon.`);
+    return;
+  }
+
+  console.error("Server failed to start:", error);
+});
