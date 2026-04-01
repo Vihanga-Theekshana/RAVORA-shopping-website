@@ -205,7 +205,9 @@ const Orders = ({ mode = "active" }) => {
                 type="button"
                 onClick={handleCompleteOrder}
                 disabled={
-                  actionLoading || selectedOrder.order_status === "DELIVERED"
+                  actionLoading ||
+                  selectedOrder.order_status === "DELIVERED" ||
+                  selectedOrder.order_status === "CANCELLED"
                 }
                 className="rounded-full bg-black px-5 py-2 text-sm text-white disabled:opacity-50 cursor-pointer"
               >
@@ -213,12 +215,14 @@ const Orders = ({ mode = "active" }) => {
                   ? "Updating..."
                   : selectedOrder.order_status === "DELIVERED"
                     ? "Completed"
+                    : selectedOrder.order_status === "CANCELLED"
+                      ? "Cancelled"
                     : "Complete Order"}
               </button>
             </div>
 
             <div className="mt-6 grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
-              <div className="rounded-3xl border border-black bg-white p-5">
+              <div className="rounded-2xl border border-black bg-white p-5">
                 <h2 className="text-lg font-semibold text-black">
                   Customer Details
                 </h2>
@@ -251,7 +255,9 @@ const Orders = ({ mode = "active" }) => {
                   </p>
                   <p>
                     <span className="font-semibold text-black">Order Status:</span>{" "}
-                    {selectedOrder.order_status}
+                    {selectedOrder.order_status === "CANCELLED"
+                      ? "CANCELLED"
+                      : selectedOrder.order_status}
                   </p>
                   <p>
                     <span className="font-semibold text-black">Total:</span>{" "}
@@ -260,7 +266,7 @@ const Orders = ({ mode = "active" }) => {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-black bg-white p-5">
+              <div className="rounded-2xl border border-black bg-white p-5">
                 <h2 className="text-lg font-semibold text-black">Items</h2>
                 <div className="mt-4 space-y-3">
                   {detailLoading ? (
@@ -286,9 +292,23 @@ const Orders = ({ mode = "active" }) => {
                             </p>
                             <p className="mt-1 text-xs text-slate-600">
                               Qty: {item.quantity}
-                              {item.size ? ` | Size: ${item.size}` : ""}
-                              {item.color ? ` | Color: ${item.color}` : ""}
                             </p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {item.size && (
+                                <span className="rounded-full bg-white px-2.5 py-1 text-[11px] text-slate-700 ring-1 ring-gray-200">
+                                  Size: {item.size}
+                                </span>
+                              )}
+                              {item.color && (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] text-slate-700 ring-1 ring-gray-200">
+                                  <span>Color:</span>
+                                  <span
+                                    className="h-3 w-3 rounded-full border border-black/10"
+                                    style={{ backgroundColor: item.color }}
+                                  ></span>
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                         <p className="text-sm font-semibold text-black">
@@ -335,7 +355,7 @@ const Orders = ({ mode = "active" }) => {
           </div>
         )}
 
-        <div className="mt-6 border border-black bg-white p-5 sm:p-6">
+        <div className="mt-6 rounded-2xl border border-black bg-white p-5 sm:p-6">
           <h2 className="text-xl font-bold tracking-tight text-black">
             {mode === "completed" ? "Completed Orders" : "Active Orders"}
           </h2>
@@ -390,7 +410,9 @@ const Orders = ({ mode = "active" }) => {
                         <p className="text-xs text-gray-500 md:hidden">Status</p>
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                            order.order_status === "DELIVERED"
+                            order.order_status === "CANCELLED"
+                              ? "bg-red-100 text-red-700"
+                              : order.order_status === "DELIVERED"
                               ? "bg-green-100 text-green-700"
                               : order.payment_status === "PAID"
                                 ? "bg-green-100 text-green-700"
@@ -399,7 +421,9 @@ const Orders = ({ mode = "active" }) => {
                                   : "bg-amber-100 text-amber-700"
                           }`}
                         >
-                          {order.order_status === "DELIVERED"
+                          {order.order_status === "CANCELLED"
+                            ? "CANCELLED"
+                            : order.order_status === "DELIVERED"
                             ? "DELIVERED"
                             : order.payment_status}
                         </span>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,8 +11,6 @@ const Login = () => {
   //create email , password , message usestaes
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
-  const [message, setmessage] = useState("");
-
   const submithandel = async (e) => {
     e.preventDefault();
     try {
@@ -25,7 +24,7 @@ const Login = () => {
       localStorage.setItem("user_id", value.data.user.id);
       localStorage.setItem("username", value.data.user.username);
       localStorage.setItem("user_email", value.data.user.email);
-      setmessage(value.data.message);
+      notifySuccess(value.data.message || "Logged in successfully");
       setemail(""); //erasedata
       setpassword("");
       // redirect based on user
@@ -35,7 +34,7 @@ const Login = () => {
         navigate("/user");
       }
     } catch (err) {
-      setmessage(err.response?.data?.message || "Error logging in");
+      notifyError(err.response?.data?.message || "Error logging in");
     }
   };
 
@@ -56,12 +55,12 @@ const Login = () => {
         <form
           onClick={(e) => e.stopPropagation()}
           onSubmit={submithandel} //call subit handel
-          className="mx-2 w-full max-w-[400px] rounded-xl bg-white p-4 text-left text-sm text-gray-500 shadow-[0px_0px_10px_0px] shadow-black/10 sm:mx-4 sm:p-6"
+          className="relative mx-2 w-full max-w-[400px] rounded-xl bg-white p-4 text-left text-sm text-gray-500 shadow-[0px_0px_10px_0px] shadow-black/10 sm:mx-4 sm:p-6"
         >
           {isModal && (
             <button
               type="button"
-              className="absolute right-4 top-4 sm:right-6 sm:top-6"
+              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm transition hover:bg-gray-100"
               onClick={() => navigate(background?.pathname || "/")}
             >
               <svg
@@ -112,7 +111,6 @@ const Login = () => {
           >
             Log in
           </button>
-          {message}
           <p className="text-center mt-4">
             Don’t have an account?{" "}
             <Link

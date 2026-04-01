@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -8,12 +9,17 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const value = await axios.post("http://localhost:8080/api/auth/send-otp", {
-      email,
-    });
-    alert(value.data.message);
-    localStorage.setItem("reset_email", email);
-    navigate("/verify-otp");
+
+    try {
+      const value = await axios.post("http://localhost:8080/api/auth/send-otp", {
+        email,
+      });
+      notifySuccess(value.data.message || "OTP sent successfully");
+      localStorage.setItem("reset_email", email);
+      navigate("/verify-otp");
+    } catch (err) {
+      notifyError(err.response?.data?.message || "Failed to send OTP");
+    }
   };
 
   return (

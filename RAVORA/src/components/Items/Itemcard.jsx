@@ -5,7 +5,7 @@ const Itemcard = ({ title, price, img, id, inStock = true }) => {
   return (
     <>
       <div
-        className="flex cursor-pointer flex-col gap-2"
+        className="flex cursor-pointer flex-col gap-1 sm:gap-2"
         onClick={() => navigate(`/itemdetail/${id}`)}
       >
         <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-xl sm:h-72 sm:aspect-auto lg:h-80">
@@ -14,7 +14,7 @@ const Itemcard = ({ title, price, img, id, inStock = true }) => {
             // get background image
             style={{
               backgroundImage: img
-                ? `url(${img})`
+                ? `url("${img}")`
                 : "linear-gradient(#e5e7eb, #d1d5db)",
             }}
           ></div>
@@ -24,7 +24,7 @@ const Itemcard = ({ title, price, img, id, inStock = true }) => {
             </div>
           )}
         </div>
-        <div className="flex min-h-20 w-full flex-col gap-1 sm:gap-2">
+        <div className="flex min-h-12 w-full flex-col gap-0.5 sm:min-h-20 sm:gap-2">
           <h1 className="line-clamp-2 px-1 text-sm font-semibold leading-tight sm:text-base">
             {title}
           </h1>

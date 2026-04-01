@@ -77,6 +77,28 @@ const Userdashboard = () => {
     }
   };
 
+  const handleCancelOrder = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `http://localhost:8080/api/orders/${id}/cancel`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === id ? { ...order, order_status: "CANCELLED" } : order,
+        ),
+      );
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Failed to cancel order");
+    }
+  };
+
   return (
     <section className="px-4 py-6 text-black sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -94,7 +116,7 @@ const Userdashboard = () => {
         </div>
 
         <div className="mt-7 max-w-lg">
-          <div className="rounded-3xl border border-black p-5">
+          <div className="rounded-2xl border border-black p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-9 w-9 items-center justify-center rounded-full border border-black bg-gray-50">
                 <svg
@@ -132,7 +154,7 @@ const Userdashboard = () => {
         <div className="mt-10">
           <h2 className="text-xl font-bold tracking-tight">Order History</h2>
 
-          <div className="mt-5 rounded-3xl border border-black p-4 sm:p-5">
+          <div className="mt-5 rounded-2xl border border-black p-4 sm:p-5">
             {loading ? (
               <p className="text-sm text-gray-600">Loading orders...</p>
             ) : error ? (
@@ -185,8 +207,20 @@ const Userdashboard = () => {
                       <span className="rounded-full bg-gray-100 px-3 py-1 text-gray-700">
                         {order.payment_status}
                       </span>
-                      <span className="rounded-full bg-black px-3 py-1 text-white">
-                        {order.order_status}
+                      <span
+                        className={`rounded-full px-3 py-1 ${
+                          order.order_status === "CANCELLED"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-black text-white"
+                        }`}
+                      >
+                        {order.order_status === "DELIVERED"
+                          ? "ORDER CONFIRMED"
+                          : order.order_status === "PLACED"
+                            ? "PENDING CONFIRMATION"
+                            : order.order_status === "CANCELLED"
+                              ? "ORDER CANCELLED"
+                              : order.order_status}
                       </span>
                     </div>
 
@@ -209,9 +243,23 @@ const Userdashboard = () => {
                               <p className="font-medium text-sm">{item.product_name}</p>
                               <p className="mt-1 text-xs text-gray-600 sm:text-sm">
                                 Qty: {item.quantity}
-                                {item.size ? ` | Size: ${item.size}` : ""}
-                                {item.color ? ` | Color: ${item.color}` : ""}
                               </p>
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                {item.size && (
+                                  <span className="rounded-full bg-white px-2.5 py-1 text-[11px] text-gray-700 ring-1 ring-gray-200">
+                                    Size: {item.size}
+                                  </span>
+                                )}
+                                {item.color && (
+                                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] text-gray-700 ring-1 ring-gray-200">
+                                    <span>Color:</span>
+                                    <span
+                                      className="h-3 w-3 rounded-full border border-black/10"
+                                      style={{ backgroundColor: item.color }}
+                                    ></span>
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
                           <div className="text-right">
@@ -222,6 +270,19 @@ const Userdashboard = () => {
                         </div>
                       ))}
                     </div>
+
+                    {order.order_status !== "DELIVERED" &&
+                      order.order_status !== "CANCELLED" && (
+                        <div className="mt-4 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => handleCancelOrder(order.id)}
+                            className="cursor-pointer rounded-full border border-red-500 px-4 py-2 text-xs font-medium text-red-600 transition hover:bg-red-50"
+                          >
+                            Cancel Order
+                          </button>
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>

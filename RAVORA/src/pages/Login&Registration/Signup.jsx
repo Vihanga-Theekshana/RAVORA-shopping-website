@@ -1,13 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 export default function Example() {
   const [username, setusername] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
-  const [message, setmessage] = useState("");
-
   const handelsubmit = async (e) => {
     e.preventDefault();
     try {
@@ -19,13 +18,13 @@ export default function Example() {
           password,
         },
       );
-      setmessage(response.data.message);
+      notifySuccess(response.data.message || "Account created successfully");
 
       setusername("");
       setemail("");
       setpassword("");
     } catch (err) {
-      setmessage(err.response?.data?.message || "Error register user");
+      notifyError(err.response?.data?.message || "Error register user");
     }
   };
   const navigate = useNavigate();
@@ -108,8 +107,6 @@ export default function Example() {
           <button className="w-full mb-3 bg-gray-700 hover:bg-black transition-all active:scale-95 py-2.5 rounded text-white font-medium">
             Create Account
           </button>
-          <p>{message}</p>
-
           <p className="text-center mt-4">
             Already have an account?{" "}
             <Link

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { notifyError, notifySuccess } from "../utils/notify";
 
 const formatCurrency = (value) =>
   `Rs. ${new Intl.NumberFormat("en-LK").format(value)}`;
@@ -47,8 +48,6 @@ const Checkout = () => {
   const [postalCode, setPostalCode] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [checkoutItems, setCheckoutItems] = useState(initialItems);
 
   // Keep checkout items in local state so quantity changes immediately update totals and order payloads.
@@ -119,8 +118,6 @@ const Checkout = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      setError("");
-      setMessage("");
       const token = localStorage.getItem("token");
 
       if (
@@ -131,7 +128,7 @@ const Checkout = () => {
         !city.trim() ||
         !postalCode.trim()
       ) {
-        setError("Please fill all fields");
+        notifyError("Please fill all fields");
         return;
       }
 
@@ -140,7 +137,7 @@ const Checkout = () => {
       // COD creates the order directly in our backend without leaving the site.
       if (paymentMethod === "cod") {
         if (!token) {
-          setError("Please log in to place your order");
+          notifyError("Please log in to place your order");
           return;
         }
 
@@ -163,7 +160,7 @@ const Checkout = () => {
           },
         );
 
-        setMessage(
+        notifySuccess(
           `COD order placed successfully. Order ID: ${res.data.orderId}`,
         );
         return;
@@ -173,7 +170,7 @@ const Checkout = () => {
       const first_name = nameParts[0];
       const last_name = nameParts.slice(1).join(" ") || "Customer";
       if (!token) {
-        setError("Please log in to place your order");
+        notifyError("Please log in to place your order");
         return;
       }
       // Card payments create a pending order first, then redirect the user to PayHere.
@@ -202,7 +199,7 @@ const Checkout = () => {
       submitToPayHere(response.data.paymentUrl, response.data.formData);
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || "Failed to place order");
+      notifyError(err.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
     }
@@ -482,11 +479,6 @@ const Checkout = () => {
                 <span>Total</span>
                 <span>{formatCurrency(total)}</span>
               </div>
-
-              {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
-              {message && (
-                <p className="mt-4 text-sm text-green-600">{message}</p>
-              )}
 
               <button
                 onClick={handlePlaceOrder}

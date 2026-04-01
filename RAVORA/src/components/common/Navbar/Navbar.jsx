@@ -19,23 +19,25 @@ const Navbar = () => {
   }, [location.pathname]);
 
   const handelusericonclick = async () => {
+    const token = localStorage.getItem("token");
+
     if (
-      !localStorage.getItem("token") &&
-      (
-        location.pathname === "/Login" ||
+      !token &&
+      (location.pathname === "/Login" ||
         location.pathname === "/Signup" ||
         location.pathname === "/forgot-password" ||
         location.pathname === "/verify-otp" ||
-        location.pathname === "/reset-password"
-      )
+        location.pathname === "/reset-password")
     ) {
       return;
     }
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token");
+    if (!token) {
+      navigate("/Login", { state: { backgroundLocation: location } });
+      return;
+    }
 
+    try {
       const res = await axios.get("http://localhost:8080/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -49,7 +51,7 @@ const Navbar = () => {
       }
     } catch (err) {
       navigate("/Login", { state: { backgroundLocation: location } });
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -67,7 +69,7 @@ const Navbar = () => {
       <div className="relative z-10 grid min-h-18 grid-cols-[4.5rem_1fr_4.5rem] items-center px-4 py-4 lg:grid-cols-[1fr_auto_1fr] lg:px-6">
         <div className="flex w-[4.5rem] items-center justify-start lg:hidden">
           <button
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-md outline-none"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border-none outline-none ring-0 focus:outline-none focus:ring-0"
             onClick={() => {
               setMenuOpen(!menuOpen);
               setSearchOpen(false);
@@ -140,7 +142,7 @@ const Navbar = () => {
           </div>
           <div className="flex items-center justify-center gap-4 self-center">
             <button
-              className="flex cursor-pointer items-center justify-center"
+              className="flex cursor-pointer items-center justify-center border-none outline-none ring-0 focus:outline-none focus:ring-0"
               onClick={handlecartclick}
             >
               <svg
@@ -154,7 +156,7 @@ const Navbar = () => {
             </button>
 
             <button
-              className="flex cursor-pointer items-center justify-center"
+              className="flex cursor-pointer items-center justify-center border-none outline-none ring-0 focus:outline-none focus:ring-0"
               onClick={handelusericonclick}
             >
               <svg
@@ -175,7 +177,7 @@ const Navbar = () => {
 
         <div className="flex w-[4.5rem] items-center justify-end gap-1 lg:hidden">
           <button
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-md outline-none"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border-none outline-none ring-0 focus:outline-none focus:ring-0"
             onClick={() => {
               setSearchOpen(!searchOpen);
               setMenuOpen(false);
@@ -197,7 +199,7 @@ const Navbar = () => {
           </button>
 
           <button
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-md outline-none"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border-none outline-none ring-0 focus:outline-none focus:ring-0"
             aria-label="Cart"
             onClick={handlecartclick}
           >
@@ -222,26 +224,26 @@ const Navbar = () => {
       {menuOpen && (
         <div className="flex flex-col gap-4 px-4 pb-4 lg:hidden">
           <Link to="/" onClick={() => setMenuOpen(false)}>
-            <button className="w-full cursor-pointer rounded-lg py-2 text-left font-semibold hover:bg-gray-100">
+            <button className="w-full cursor-pointer rounded-lg border-none py-2 text-left font-semibold outline-none ring-0 hover:bg-gray-100 focus:outline-none focus:ring-0">
               Home
             </button>
           </Link>
 
           <Link to="/Men" onClick={() => setMenuOpen(false)}>
-            <button className="w-full cursor-pointer rounded-lg py-2 text-left font-semibold hover:bg-gray-100">
+            <button className="w-full cursor-pointer rounded-lg border-none py-2 text-left font-semibold outline-none ring-0 hover:bg-gray-100 focus:outline-none focus:ring-0">
               Men's Clothing
             </button>
           </Link>
 
           <Link to="/Women" onClick={() => setMenuOpen(false)}>
-            <button className="w-full cursor-pointer rounded-lg py-2 text-left font-semibold hover:bg-gray-100">
+            <button className="w-full cursor-pointer rounded-lg border-none py-2 text-left font-semibold outline-none ring-0 hover:bg-gray-100 focus:outline-none focus:ring-0">
               Women's Clothing
             </button>
           </Link>
           {token ? (
             <div className="flex items-center pt-2">
-              <button
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-black bg-black px-4 py-2 font-semibold text-white transition hover:bg-gray-800"
+                <button
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-black bg-black px-4 py-2 font-semibold text-white outline-none ring-0 transition hover:bg-gray-800 focus:outline-none focus:ring-0"
                 onClick={() => {
                   setMenuOpen(false);
                   handelusericonclick();
@@ -269,7 +271,7 @@ const Navbar = () => {
                 state={{ backgroundLocation: location }}
                 onClick={() => setMenuOpen(false)}
               >
-                <button className="w-full cursor-pointer rounded-lg border border-black px-4 py-2 text-center font-semibold text-black">
+                <button className="w-full cursor-pointer rounded-lg border border-black px-4 py-2 text-center font-semibold text-black outline-none ring-0 focus:outline-none focus:ring-0">
                   Login
                 </button>
               </Link>
@@ -278,7 +280,7 @@ const Navbar = () => {
                 state={{ backgroundLocation: location }}
                 onClick={() => setMenuOpen(false)}
               >
-                <button className="w-full cursor-pointer rounded-lg bg-black px-4 py-2 text-center font-semibold text-white">
+                <button className="w-full cursor-pointer rounded-lg bg-black px-4 py-2 text-center font-semibold text-white outline-none ring-0 focus:outline-none focus:ring-0">
                   Register
                 </button>
               </Link>

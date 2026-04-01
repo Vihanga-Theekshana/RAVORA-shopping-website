@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 const normalizeSizes = (sizes) => {
   if (Array.isArray(sizes)) {
@@ -80,11 +81,11 @@ const Itemdetail = () => {
       const user_id = localStorage.getItem("user_id");
       const token = localStorage.getItem("token");
       if (filteritem?.sizes?.length > 0 && !selectedSize) {
-        alert("Please select a size");
+        notifyError("Please select a size");
         return;
       }
       if (filteritem?.colors?.length > 0 && !selectedColor) {
-        alert("Please select a color");
+        notifyError("Please select a color");
         return;
       }
       await axios.post(
@@ -100,8 +101,10 @@ const Itemdetail = () => {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
+      notifySuccess("Added to cart");
     } catch (err) {
       console.log(err);
+      notifyError(err.response?.data?.message || "Failed to add item to cart");
     }
   };
 
@@ -111,11 +114,11 @@ const Itemdetail = () => {
 
   const handleBuyNow = () => {
     if (filteritem?.sizes?.length > 0 && !selectedSize) {
-      alert("Please select a size");
+      notifyError("Please select a size");
       return;
     }
     if (filteritem?.colors?.length > 0 && !selectedColor) {
-      alert("Please select a color");
+      notifyError("Please select a color");
       return;
     }
 

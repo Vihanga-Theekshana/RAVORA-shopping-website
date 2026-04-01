@@ -3,13 +3,16 @@ import Itemcard from "../components/Items/Itemcard";
 import Pagination from "./Pagination";
 import axios from "axios";
 import { useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Menclothing = () => {
   //-------------set use state to store all items ------------
+  const [loading, setLoading] = useState(false);
   const [item, setitem] = useState([]);
   useEffect(() => {
     const fetchdata = async () => {
       try {
+        setLoading(true);
         const res = await axios.get(
           "http://localhost:8080/api/item/mensclothing", //request get
         );
@@ -40,26 +43,28 @@ const Menclothing = () => {
   const variableitem = filtermen.slice(start, start + itemperpage);
   return (
     <>
-      <div className="grid grid-cols-1 gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:px-10 xl:grid-cols-4">
-        {variableitem.map((value) => {
-          return (
-            <div key={value.id}>
-              {/* pass props value to item card */}
-              <Itemcard
-                title={value.name}
-                price={value.price}
-                id={value.id}
-                inStock={value.in_stock !== 0}
-                img={
-                  value.images?.length > 0
-                    ? `http://localhost:8080/upload/${value.images[0]}`
-                    : ""
-                }
-              />
-            </div>
-          );
-        })}
-      </div>
+      {loading && (
+        <div className="grid grid-cols-1 gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:px-10 xl:grid-cols-4">
+          {variableitem.map((value) => {
+            return (
+              <div key={value.id}>
+                {/* pass props value to item card */}
+                <Itemcard
+                  title={value.name}
+                  price={value.price}
+                  id={value.id}
+                  inStock={value.in_stock !== 0}
+                  img={
+                    value.images?.length > 0
+                      ? `http://localhost:8080/upload/${value.images[0]}`
+                      : ""
+                  }
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
       {/* pagination */}
       <Pagination
         page={page}

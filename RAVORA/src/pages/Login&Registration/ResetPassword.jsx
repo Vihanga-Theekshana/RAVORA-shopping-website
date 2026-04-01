@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const email = localStorage.getItem("reset_email");
 
@@ -13,15 +13,19 @@ const ResetPassword = () => {
     e.preventDefault();
 
     if (password === confirmPassword) {
-      const value = await axios.post(
-        "http://localhost:8080/api/auth/reset-password",
-        { email, password },
-      );
-      setMessage(value.data.message);
-      localStorage.removeItem("reset_email");
-      navigate("/Login");
+      try {
+        const value = await axios.post(
+          "http://localhost:8080/api/auth/reset-password",
+          { email, password },
+        );
+        notifySuccess(value.data.message || "Password reset successful");
+        localStorage.removeItem("reset_email");
+        navigate("/Login");
+      } catch (err) {
+        notifyError(err.response?.data?.message || "Failed to reset password");
+      }
     } else {
-      setMessage("Passwords do not match");
+      notifyError("Passwords do not match");
     }
   };
 
@@ -38,10 +42,6 @@ const ResetPassword = () => {
           <p className="mb-6 text-center text-sm text-gray-500">
             Enter your new password below.
           </p>
-
-          {message && (
-            <p className="mb-4 text-center text-sm text-red-600">{message}</p>
-          )}
 
           <input
             type="password"

@@ -28,6 +28,26 @@ const Homepage = () => {
     fetchdata();
   }, []);
 
+  useEffect(() => {
+    const sections = document.querySelectorAll("[data-reveal]");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("opacity-0", "translate-y-9");
+            entry.target.classList.add("opacity-100", "translate-y-0");
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
+
   //---------------------map item mean image url convert to object ---------------------
   const mapitem = item.map((value) => ({
     ...value,
@@ -38,7 +58,10 @@ const Homepage = () => {
   return (
     <>
       <Promovideo />
-      <section className="mx-auto w-full max-w-7xl px-4 pt-8 sm:px-6 sm:pt-10 lg:px-10">
+      <section
+        data-reveal
+        className="mx-auto w-full max-w-7xl translate-y-9 px-4 pt-8 opacity-0 transition-all duration-700 ease-out sm:px-6 sm:pt-10 lg:px-10"
+      >
         <div className="flex justify-center text-center">
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
             Shop By Catagory
@@ -116,7 +139,10 @@ const Homepage = () => {
       </section>
       {/* items */}
 
-      <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
+      <section
+        data-reveal
+        className="mx-auto w-full max-w-7xl translate-y-9 px-4 py-8 opacity-0 transition-all duration-700 ease-out sm:px-6 lg:px-10"
+      >
         <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-5">
         {mapitem.slice(0, showmore).map((value) => {
           return (
@@ -137,7 +163,10 @@ const Homepage = () => {
         })}
         </div>
       </section>
-      <div className="flex items-center justify-center px-4 pb-8 sm:pb-10">
+      <div
+        data-reveal
+        className="flex translate-y-9 items-center justify-center px-4 pb-8 opacity-0 transition-all duration-700 ease-out sm:pb-10"
+      >
         <div>
           {showmore < mapitem.length && (
             <button

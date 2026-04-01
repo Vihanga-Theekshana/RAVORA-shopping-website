@@ -1,5 +1,5 @@
 const express = require("express");
-const {cod,createpayment,notify,getUserOrders} = require("../controllers/payment.controller");
+const {cod,createpayment,notify,getUserOrders,cancelUserOrder} = require("../controllers/payment.controller");
 const { veryfytoken } = require("../middleware/auth.middleware");
 
 const router = express.Router();
@@ -9,6 +9,7 @@ router.post("/cod",veryfytoken, cod);
 // PAYHERE CREATE
 router.post("/create-payment",veryfytoken,createpayment);
 router.get("/my-orders",veryfytoken,getUserOrders);
+router.post("/:id/cancel",veryfytoken,cancelUserOrder);
 // PAYHERE NOTIFY
 router.post("/notify",notify);
 

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 const Veryfiotp = () => {
   const email = localStorage.getItem("reset_email");
@@ -17,12 +18,17 @@ const Veryfiotp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const value = await axios.post(
-      "http://localhost:8080/api/auth/verify-otp",
-      { otp, email },
-    );
-    alert(value.data.message);
-    navigate("/reset-password");
+
+    try {
+      const value = await axios.post(
+        "http://localhost:8080/api/auth/verify-otp",
+        { otp, email },
+      );
+      notifySuccess(value.data.message || "OTP verified");
+      navigate("/reset-password");
+    } catch (err) {
+      notifyError(err.response?.data?.message || "Failed to verify OTP");
+    }
   };
 
   return (

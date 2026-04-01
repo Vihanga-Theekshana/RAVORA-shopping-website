@@ -1,5 +1,6 @@
 import "./App.css";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Footer from "./components/common/footer/Footer";
 import Navbar from "./components/common/Navbar/Navbar";
 import Homepage from "./pages/Homepage";
@@ -30,6 +31,7 @@ function App() {
   return (
     <>
       <Navbar />
+      <Toaster position="top-right" toastOptions={{ duration: 2500 }} />
 
       <Routes location={background || location}>
         <Route path="/" element={<Homepage />} />

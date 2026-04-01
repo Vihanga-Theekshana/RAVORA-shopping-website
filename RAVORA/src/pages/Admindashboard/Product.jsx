@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 const Product = () => {
   const [item, setitem] = useState([]);
@@ -40,9 +41,10 @@ const Product = () => {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setitem((prv) => prv.filter((product) => product.id !== id));
-      alert("Delete Sucessfuly");
+      notifySuccess("Deleted successfully");
     } catch (err) {
       console.log(err);
+      notifyError(err.response?.data?.message || "Failed to delete item");
     }
   };
 
@@ -72,8 +74,10 @@ const Product = () => {
             : product,
         ),
       );
+      notifySuccess(checked ? "Marked as in stock" : "Marked as out of stock");
     } catch (err) {
       console.log(err);
+      notifyError(err.response?.data?.message || "Failed to update stock");
     }
   };
 
@@ -105,8 +109,10 @@ const Product = () => {
         ),
       );
       setEditingProduct(null);
+      notifySuccess("Product updated successfully");
     } catch (err) {
       console.log(err);
+      notifyError(err.response?.data?.message || "Failed to update product");
     }
   };
 
@@ -114,7 +120,7 @@ const Product = () => {
     <div className="flex flex-1 flex-col justify-between py-1">
       <div className="w-full p-4 md:p-10">
         <h2 className="pb-4 text-lg font-medium">All Products</h2>
-        <div className="flex w-full max-w-5xl flex-col items-center overflow-x-auto rounded-md border border-gray-500/20 bg-white">
+        <div className="flex w-full max-w-5xl flex-col items-center overflow-x-auto rounded-2xl border border-gray-500/20 bg-white">
           <table className="w-full table-fixed overflow-hidden md:table-auto">
             <thead className="text-left text-sm text-gray-900">
               <tr>

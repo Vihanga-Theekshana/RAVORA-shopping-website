@@ -4,6 +4,7 @@ import Additem from "./Additem";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Orders from "./Orders";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -96,10 +97,11 @@ const Admin = () => {
       await axios.post("http://localhost:8080/api/auth/logout");
       localStorage.removeItem("token");
       localStorage.removeItem("role");
-      alert("You have logged out successfully!");
+      notifySuccess("You have logged out successfully!");
       navigate("/");
     } catch (err) {
       console.error(err + "Logout failed");
+      notifyError("Logout failed");
     }
   };
 

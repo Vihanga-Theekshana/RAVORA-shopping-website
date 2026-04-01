@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useState } from "react";
-import Itemcard from "../../components/Items/Itemcard";
+import { useMemo, useState } from "react";
+import { notifyError, notifySuccess } from "../../utils/notify";
 
 const SIZE_OPTIONS = ["XS", "S", "M", "L", "XL", "XXL"];
 const IMAGE_SLOTS = 4;
@@ -16,6 +16,10 @@ const Additem = () => {
   const [sizes, setSizes] = useState([]);
   const [colorInput, setColorInput] = useState("#000000");
   const [colors, setColors] = useState([]);
+  const cardPreviewImage = useMemo(
+    () => preview.find(Boolean) || "",
+    [preview],
+  );
 
   const handelimage = (index, file) => {
     if (!file) {
@@ -88,9 +92,10 @@ const Additem = () => {
       await axios.post("http://localhost:8080/api/admin/additem", formdata, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("Product Added Successfully");
+      notifySuccess("Product added successfully");
     } catch (err) {
       console.error(err);
+      notifyError(err.response?.data?.message || "Failed to add product");
     }
   };
 
@@ -107,7 +112,7 @@ const Additem = () => {
               {Array.from({ length: IMAGE_SLOTS }).map((_, index) => (
                 <label
                   key={index}
-                  className="relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded border border-dashed border-gray-400/70 bg-gray-50"
+                  className="relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-dashed border-gray-400/70 bg-gray-50"
                 >
                   <input
                     accept="image/*"
@@ -158,7 +163,7 @@ const Additem = () => {
               id="product-name"
               type="text"
               placeholder="Type here"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded-2xl border border-gray-500/40"
               value={name}
               onChange={(e) => setname(e.target.value)}
               required
@@ -174,7 +179,7 @@ const Additem = () => {
             <textarea
               id="product-description"
               rows={4}
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
+              className="outline-none md:py-2.5 py-2 px-3 rounded-2xl border border-gray-500/40 resize-none"
               value={description}
               onChange={(e) => setdescription(e.target.value)}
               placeholder="Type here"
@@ -186,7 +191,7 @@ const Additem = () => {
             </label>
             <select
               id="category"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded-2xl border border-gray-500/40"
               value={category}
               onChange={(e) => setcategory(e.target.value)}
             >
@@ -206,7 +211,7 @@ const Additem = () => {
               {SIZE_OPTIONS.map((size) => (
                 <label
                   key={size}
-                  className={`flex cursor-pointer items-center gap-2 rounded border px-3 py-2 text-sm transition ${
+                  className={`flex cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2 text-sm transition ${
                     sizes.includes(size)
                       ? "border-black bg-black text-white"
                       : "border-gray-400/40 bg-white text-black"
@@ -230,7 +235,7 @@ const Additem = () => {
                 type="color"
                 value={colorInput}
                 onChange={(e) => setColorInput(e.target.value)}
-                className="h-10 w-14 cursor-pointer rounded border border-gray-400/40 bg-white p-1"
+                className="h-10 w-14 cursor-pointer rounded-2xl border border-gray-400/40 bg-white p-1"
               />
               <button
                 type="button"
@@ -245,7 +250,7 @@ const Additem = () => {
                 {colors.map((color) => (
                   <div
                     key={color}
-                    className="flex items-center gap-2 rounded border border-gray-300 px-2 py-1"
+                    className="flex items-center gap-2 rounded-2xl border border-gray-300 px-2 py-1"
                   >
                     <span
                       className="h-5 w-5 rounded-full border border-black/20"
@@ -273,7 +278,7 @@ const Additem = () => {
                 id="product-price"
                 type="number"
                 placeholder="0"
-                className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+                className="outline-none md:py-2.5 py-2 px-3 rounded-2xl border border-gray-500/40"
                 value={price}
                 onChange={(e) => setprice(e.target.value)}
                 required
@@ -287,7 +292,7 @@ const Additem = () => {
                 id="offer-price"
                 type="number"
                 placeholder="0"
-                className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+                className="outline-none md:py-2.5 py-2 px-3 rounded-2xl border border-gray-500/40"
                 value={offerprice}
                 onChange={(e) => setofferprice(e.target.value)}
                 required
@@ -296,7 +301,7 @@ const Additem = () => {
           </div>
           <button
             type="submit"
-            className="px-8 py-2.5 bg-black text-white font-medium rounded cursor-pointer hover:bg-gray-500"
+            className="px-8 py-2.5 bg-black text-white font-medium rounded-2xl cursor-pointer hover:bg-gray-500"
           >
             ADD
           </button>
@@ -306,10 +311,13 @@ const Additem = () => {
         <div className="w-full max-w-60">
           <div className="flex flex-col gap-2">
             <div
-              className="w-full h-80  bg-cover bg-center rounded-xl bg-gray-400"
+              key={cardPreviewImage || "empty-preview"}
+              className="w-full h-80  bg-cover bg-center rounded-2xl bg-gray-400"
               // get background image
               style={{
-                backgroundImage: preview[0] ? `url(${preview[0]})` : "",
+                backgroundImage: cardPreviewImage
+                  ? `url("${cardPreviewImage}")`
+                  : "",
               }}
             ></div>
             <div className="w-full h-20 flex flex-col gap-2">
@@ -320,7 +328,7 @@ const Additem = () => {
                   {sizes.map((size) => (
                     <span
                       key={size}
-                      className="rounded border border-black px-2 py-0.5 text-xs"
+                      className="rounded-2xl border border-black px-2 py-0.5 text-xs"
                     >
                       {size}
                     </span>

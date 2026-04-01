@@ -33,26 +33,28 @@ const insertOrderItem = async (connection, dbOrderId, item) => {
     );
   } catch (err) {
     if (!isUnknownColumnError(err)) {
-      try {
-        await connection.query(
-          `INSERT INTO order_items
-          (order_id, product_id, product_name, product_price, quantity, image, size)
-          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          [
-            dbOrderId,
-            item.product_id,
-            item.product_name,
-            item.product_price,
-            item.quantity,
-            item.image,
-            item.size || null,
-          ]
-        );
-        return;
-      } catch (nestedErr) {
-        if (!isUnknownColumnError(nestedErr)) {
-          throw nestedErr;
-        }
+      throw err;
+    }
+
+    try {
+      await connection.query(
+        `INSERT INTO order_items
+        (order_id, product_id, product_name, product_price, quantity, image, size)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          dbOrderId,
+          item.product_id,
+          item.product_name,
+          item.product_price,
+          item.quantity,
+          item.image,
+          item.size || null,
+        ]
+      );
+      return;
+    } catch (nestedErr) {
+      if (!isUnknownColumnError(nestedErr)) {
+        throw nestedErr;
       }
     }
 
@@ -425,4 +427,37 @@ async function getUserOrders(req, res) {
   }
 }
 
-module.exports = {cod,createpayment,notify,getUserOrders};
+async function cancelUserOrder(req, res) {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const [orders] = await pool.query(
+      `SELECT id, order_status FROM orders WHERE id = ? AND user_id = ?`,
+      [id, userId],
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (orders[0].order_status === "DELIVERED") {
+      return res.status(400).json({ message: "Delivered orders cannot be cancelled" });
+    }
+
+    if (orders[0].order_status === "CANCELLED") {
+      return res.status(400).json({ message: "Order is already cancelled" });
+    }
+
+    await pool.query(`UPDATE orders SET order_status = "CANCELLED" WHERE id = ?`, [
+      id,
+    ]);
+
+    return res.json({ message: "Order cancelled successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Failed to cancel order" });
+  }
+}
+
+module.exports = {cod,createpayment,notify,getUserOrders,cancelUserOrder};
