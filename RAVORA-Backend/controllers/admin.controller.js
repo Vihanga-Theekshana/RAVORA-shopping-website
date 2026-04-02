@@ -5,7 +5,7 @@ const isUnknownColumnError = (error) =>
 
 async function admin(req,res) {
 try{
-   const{name,description,catagory,price,offerprice,sizes,colors} = req.body;
+   const{name,description,catagory,price,sizes,colors} = req.body;
 
 if(! req.files || req.files.length === 0){
     return res.status(400).json({ message: "No images uploaded" });
@@ -22,12 +22,12 @@ if(! req.files || req.files.length === 0){
         ? [colors]
         : [];
     try {
-        await pool.query("INSERT INTO PRODUCTS (name,description,category,price,offerPrice,images,sizes,colors,in_stock) VALUES(?,?,?,?,?,?,?,?,?)",[name,description,catagory,price,offerprice,JSON.stringify(imagepaths),JSON.stringify(parsedSizes),JSON.stringify(parsedColors),1]);
+        await pool.query("INSERT INTO PRODUCTS (name,description,category,price,images,sizes,colors,in_stock) VALUES(?,?,?,?,?,?,?,?)",[name,description,catagory,price,JSON.stringify(imagepaths),JSON.stringify(parsedSizes),JSON.stringify(parsedColors),1]);
     } catch (err) {
         if (!isUnknownColumnError(err)) {
             throw err;
         }
-        await pool.query("INSERT INTO PRODUCTS (name,description,category,price,offerPrice,images) VALUES(?,?,?,?,?,?)",[name,description,catagory,price,offerprice,JSON.stringify(imagepaths)]);
+        await pool.query("INSERT INTO PRODUCTS (name,description,category,price,images) VALUES(?,?,?,?,?)",[name,description,catagory,price,JSON.stringify(imagepaths)]);
     }
     return res.status(200).json({message:"upload successfuly"});
 }catch(err){
@@ -52,10 +52,10 @@ async function deleteitem(req,res) {
 
 async function updateItem(req, res) {
     try {
-        const { id, name, description, category, price, offerprice } = req.body;
+        const { id, name, description, category, price } = req.body;
         await pool.query(
-            "UPDATE products SET name = ?, description = ?, category = ?, price = ?, offerPrice = ? WHERE id = ?",
-            [name, description, category, price, offerprice, id]
+            "UPDATE products SET name = ?, description = ?, category = ?, price = ? WHERE id = ?",
+            [name, description, category, price, id]
         );
         return res.status(200).json({ message: "update successfuly" });
     } catch (err) {

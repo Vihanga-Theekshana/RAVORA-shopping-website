@@ -10,7 +10,6 @@ const Additem = () => {
   const [description, setdescription] = useState("");
   const [category, setcategory] = useState("");
   const [price, setprice] = useState("");
-  const [offerprice, setofferprice] = useState("");
   const [images, setimages] = useState(Array(IMAGE_SLOTS).fill(null));
   const [preview, setpreview] = useState(Array(IMAGE_SLOTS).fill(null));
   const [sizes, setSizes] = useState([]);
@@ -79,7 +78,6 @@ const Additem = () => {
     formdata.append("description", description);
     formdata.append("catagory", category);
     formdata.append("price", price);
-    formdata.append("offerprice", offerprice);
     sizes.forEach((size) => formdata.append("sizes", size));
     colors.forEach((color) => formdata.append("colors", color));
 
@@ -269,35 +267,19 @@ const Additem = () => {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-5 flex-wrap">
-            <div className="flex-1 flex flex-col gap-1 w-32">
-              <label className="text-base font-medium" htmlFor="product-price">
-                Product Price
-              </label>
-              <input
-                id="product-price"
-                type="number"
-                placeholder="0"
-                className="outline-none md:py-2.5 py-2 px-3 rounded-2xl border border-gray-500/40"
-                value={price}
-                onChange={(e) => setprice(e.target.value)}
-                required
-              />
-            </div>
-            <div className="flex-1 flex flex-col gap-1 w-32">
-              <label className="text-base font-medium" htmlFor="offer-price">
-                Offer Price
-              </label>
-              <input
-                id="offer-price"
-                type="number"
-                placeholder="0"
-                className="outline-none md:py-2.5 py-2 px-3 rounded-2xl border border-gray-500/40"
-                value={offerprice}
-                onChange={(e) => setofferprice(e.target.value)}
-                required
-              />
-            </div>
+          <div className="flex max-w-md flex-col gap-1">
+            <label className="text-base font-medium" htmlFor="product-price">
+              Product Price
+            </label>
+            <input
+              id="product-price"
+              type="number"
+              placeholder="0"
+              className="outline-none md:py-2.5 py-2 px-3 rounded-2xl border border-gray-500/40"
+              value={price}
+              onChange={(e) => setprice(e.target.value)}
+              required
+            />
           </div>
           <button
             type="submit"

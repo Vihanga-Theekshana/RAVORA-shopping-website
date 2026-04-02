@@ -10,12 +10,12 @@ async function clothing (req,res) {
         // get value in product table
         let item;
         try {
-            [item] =await pool.query("SELECT id,name,description,category,price,offerPrice,images,sizes,colors,in_stock FROM products" );
+            [item] =await pool.query("SELECT id,name,description,category,price,images,sizes,colors,in_stock FROM products" );
         } catch (err) {
             if (!isUnknownColumnError(err)) {
                 throw err;
             }
-            [item] = await pool.query("SELECT id,name,description,category,price,offerPrice,images FROM products" );
+            [item] = await pool.query("SELECT id,name,description,category,price,images FROM products" );
         }
         if(item.length == 0){
             return res.status(400).json({message:"empty items"});
@@ -34,12 +34,12 @@ async function eachclothing(req,res) {
         const {id} = req.query;
         let item;
         try {
-            [item] =await pool.query("SELECT id,name,description,category,price,offerPrice,images,sizes,colors,in_stock FROM products WHERE id = ?" , [id] );
+            [item] =await pool.query("SELECT id,name,description,category,price,images,sizes,colors,in_stock FROM products WHERE id = ?" , [id] );
         } catch (err) {
             if (!isUnknownColumnError(err)) {
                 throw err;
             }
-            [item] = await pool.query("SELECT id,name,description,category,price,offerPrice,images FROM products WHERE id = ?" , [id] );
+            [item] = await pool.query("SELECT id,name,description,category,price,images FROM products WHERE id = ?" , [id] );
         }
         if(item.length == 0){
             return res.status(400).json({message:"empty items"});

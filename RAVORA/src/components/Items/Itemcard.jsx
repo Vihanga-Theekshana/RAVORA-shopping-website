@@ -2,13 +2,14 @@ import { useNavigate } from "react-router-dom";
 
 const Itemcard = ({ title, price, img, id, inStock = true }) => {
   const navigate = useNavigate();
+
   return (
     <>
       <div
-        className="flex cursor-pointer flex-col gap-1 sm:gap-2"
+        className="flex h-full cursor-pointer flex-col"
         onClick={() => navigate(`/itemdetail/${id}`)}
       >
-        <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-xl sm:h-72 sm:aspect-auto lg:h-80">
+        <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-[1.4rem] sm:h-72 sm:aspect-auto lg:h-80">
           <div
             className="h-full w-full bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110"
             // get background image
@@ -24,11 +25,15 @@ const Itemcard = ({ title, price, img, id, inStock = true }) => {
             </div>
           )}
         </div>
-        <div className="flex min-h-12 w-full flex-col gap-0.5 sm:min-h-20 sm:gap-2">
-          <h1 className="line-clamp-2 px-1 text-sm font-semibold leading-tight sm:text-base">
+        <div className="flex flex-1 flex-col px-0.5 pt-2.5">
+          <h1 className="line-clamp-2 h-[2.75rem] pt-1 text-[0.85rem] font-semibold leading-[1.1] tracking-tight text-black sm:h-[2.95rem] sm:text-[0.92rem]">
             {title}
           </h1>
-          <h3 className="px-1 text-sm sm:text-base">Rs {price}</h3>
+          <div className="mt-0 min-h-[1.4rem]">
+            <h3 className="text-[0.85rem] font-medium leading-none text-black sm:text-[0.92rem]">
+              Rs {price}
+            </h3>
+          </div>
         </div>
       </div>
     </>

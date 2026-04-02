@@ -10,7 +10,6 @@ const Product = () => {
     description: "",
     category: "",
     price: "",
-    offerprice: "",
   });
 
   useEffect(() => {
@@ -55,7 +54,6 @@ const Product = () => {
       description: product.description || "",
       category: product.category || "",
       price: product.price || "",
-      offerprice: product.offerPrice || "",
     });
   };
 
@@ -103,7 +101,6 @@ const Product = () => {
                 description: form.description,
                 category: form.category,
                 price: form.price,
-                offerPrice: form.offerprice,
               }
             : product,
         ),
@@ -271,15 +268,6 @@ const Product = () => {
                   setForm((prev) => ({ ...prev, price: e.target.value }))
                 }
                 placeholder="Price"
-                type="number"
-              />
-              <input
-                className="rounded border border-gray-300 px-3 py-2"
-                value={form.offerprice}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, offerprice: e.target.value }))
-                }
-                placeholder="Offer price"
                 type="number"
               />
             </div>
