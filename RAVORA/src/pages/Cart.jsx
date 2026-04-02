@@ -15,10 +15,13 @@ const normalizeImages = (images) => {
   }
 };
 
+const getItemPrice = (value) => Number(value.price ?? value.product_price ?? 0);
+const getItemQuantity = (value, itemQuantities) =>
+  Number(itemQuantities[value.id] ?? value.quantity ?? value.qty ?? 1);
+
 const Cart = () => {
   const navigate = useNavigate();
   const [item, setitem] = useState([]);
-  const [itemTotals, setItemTotals] = useState({});
   const [itemQuantities, setItemQuantities] = useState({});
   useEffect(() => {
     const fetchdata = async () => {
@@ -38,17 +41,6 @@ const Cart = () => {
     fetchdata();
   }, []);
 
-  const handleItemTotalChange = useCallback((id, total) => {
-    setItemTotals((prev) => {
-      if (prev[id] === total) {
-        return prev;
-      }
-      return {
-        ...prev,
-        [id]: total,
-      };
-    });
-  }, []);
   const handleItemQuantityChange = useCallback((id, quantity) => {
     setItemQuantities((prev) => {
       if (prev[id] === quantity) {
@@ -60,17 +52,9 @@ const Cart = () => {
       };
     });
   }, []);
-  const subtotal = Object.values(itemTotals).reduce(
-    (sum, value) => sum + value,
-    0,
-  );
+
   const handleRemoveItem = (id) => {
     setitem((prev) => prev.filter((item) => item.id !== id));
-    setItemTotals((prev) => {
-      const updated = { ...prev };
-      delete updated[id];
-      return updated;
-    });
     setItemQuantities((prev) => {
       const updated = { ...prev };
       delete updated[id];
@@ -83,8 +67,13 @@ const Cart = () => {
   }));
   const checkoutItems = mapitem.map((value) => ({
     ...value,
-    quantity: itemQuantities[value.id] ?? value.quantity ?? value.qty ?? 1,
+    quantity: getItemQuantity(value, itemQuantities),
   }));
+  const subtotal = checkoutItems.reduce(
+    (sum, value) => sum + getItemPrice(value) * getItemQuantity(value, itemQuantities),
+    0,
+  );
+
   return (
     <div className="flex flex-col items-center px-4 sm:px-6">
       <h1 className="pb-3 pt-8 text-center text-2xl font-semibold sm:pt-10">
@@ -97,7 +86,6 @@ const Cart = () => {
               <Cartcard
                 id={value.id}
                 price={value.price}
-                onTotalChange={handleItemTotalChange}
                 onQuantityChange={handleItemQuantityChange}
                 name={value.name}
                 size={value.size}

@@ -1,10 +1,9 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Cartcard = ({
   name,
   price,
-  onTotalChange,
   onQuantityChange,
   image,
   id,
@@ -15,11 +14,6 @@ const Cartcard = ({
   readOnly = false,
 }) => {
   const [count, setcount] = useState(quantity);
-  const onTotalChangeRef = useRef(onTotalChange);
-
-  useEffect(() => {
-    onTotalChangeRef.current = onTotalChange;
-  }, [onTotalChange]);
 
   useEffect(() => {
     setcount(quantity);
@@ -34,10 +28,6 @@ const Cartcard = ({
   };
 
   const total = price * count;
-
-  useEffect(() => {
-    onTotalChangeRef.current?.(id, total);
-  }, [id, total]);
 
   useEffect(() => {
     onQuantityChange?.(id, count);
